@@ -29,8 +29,8 @@ public class MazeRenderer : MonoBehaviour
             return;
         }
 
-        CreatePlane(Vector3.zero, Vector3.zero);
-        CreatePlane(new Vector3(0, wallPrefab.localScale.y, 0), new Vector3(180, 0, 0));
+        CreatePlane(new Vector3(0, -wallPrefab.localScale.y / 2, 0), Vector3.zero);
+        CreatePlane(new Vector3(0, wallPrefab.localScale.y / 2, 0), new Vector3(180, 0, 0));
 
         AddWallsToPool(500);
         baseOffset = wallPrefab.localScale.x / 2;
@@ -59,14 +59,14 @@ public class MazeRenderer : MonoBehaviour
             for (int j = 0; j < height; j++)
             {
                 WallState node = walls[i, j];
-                GenerateWall(node, WallState.Right, i, j, new Vector2(baseOffset, 0), 0);
-                GenerateWall(node, WallState.Down, i, j, new Vector2(0, -baseOffset), 90);
-                GenerateWall(node, WallState.Left, i, j, new Vector2(-baseOffset, 0), 180);
-                GenerateWall(node, WallState.Up, i, j, new Vector2(0, baseOffset), 270);
+                GenerateWall(node, WallState.Right, i, j, new Vector2(baseOffset, 0), 0, i == 0);
+                GenerateWall(node, WallState.Down, i, j, new Vector2(0, -baseOffset), 90, j == height - 1);
+                GenerateWall(node, WallState.Left, i, j, new Vector2(-baseOffset, 0), 180, i == width - 1);
+                GenerateWall(node, WallState.Up, i, j, new Vector2(0, baseOffset), 270, j == 0);
             }
         }
 
-        Vector3 newPos = new Vector3(width / 2, 0, height / 2);
+        Vector3 newPos = new Vector3((width - 1f) / 2, 0, (height - 1f) / 2);
         Vector3 newScale = new Vector3(width / 10, 0, height / 10);
         for (int i = 0; i < groundAndRoof.Count; i++)
         {
@@ -75,9 +75,9 @@ public class MazeRenderer : MonoBehaviour
         }
     }
 
-    private void GenerateWall(WallState node, WallState wallState, float x, float y, Vector2 offset, float yRot)
+    private void GenerateWall(WallState node, WallState wallState, float x, float y, Vector2 offset, float yRot, bool ignoreValue)
     {
-        if (node.HasFlag(wallState))
+        if (node.HasFlag(wallState) && !ignoreValue)
         {
             if (wallPool.Count == 0)
             {
