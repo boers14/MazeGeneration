@@ -34,14 +34,14 @@ public class MazeRenderer : MonoBehaviour
 
         AddWallsToPool(500);
         baseOffset = wallPrefab.localScale.x / 2;
-        GenerateMaze(MazeGenerator.GenerateMaze(width, height));
+        GenerateMaze(MazeGenerator.GenerateMaze(width, height, MazeGenerator.MazeType.RecursiveBackTracking));
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            GenerateMaze(MazeGenerator.GenerateMaze(width, height));
+            GenerateMaze(MazeGenerator.GenerateMaze(width, height, MazeGenerator.MazeType.RecursiveBackTracking));
         }
     }
 
@@ -59,14 +59,14 @@ public class MazeRenderer : MonoBehaviour
             for (int j = 0; j < height; j++)
             {
                 WallState node = walls[i, j];
-                GenerateWall(node, WallState.Right, i, j, new Vector2(baseOffset, 0), 0, i == 0);
-                GenerateWall(node, WallState.Down, i, j, new Vector2(0, -baseOffset), 90, j == height - 1);
-                GenerateWall(node, WallState.Left, i, j, new Vector2(-baseOffset, 0), 180, i == width - 1);
-                GenerateWall(node, WallState.Up, i, j, new Vector2(0, baseOffset), 270, j == 0);
+                GenerateWall(node, WallState.Right, i, j, new Vector2(baseOffset, 0), 0, i == width - 1, new Vector3(0.5f, 0, 0));
+                GenerateWall(node, WallState.Down, i, j, new Vector2(0, -baseOffset), 90, j == 0, new Vector3(0, 0, -0.5f));
+                GenerateWall(node, WallState.Left, i, j, new Vector2(-baseOffset, 0), 180, false, new Vector3(-0.5f, 0, 0));
+                GenerateWall(node, WallState.Up, i, j, new Vector2(0, baseOffset), 270, false, new Vector3(0, 0, 0.5f));
             }
         }
 
-        Vector3 newPos = new Vector3((width - 1f) / 2, 0, (height - 1f) / 2);
+        Vector3 newPos = new Vector3(-1, 0, 0);
         Vector3 newScale = new Vector3(width / 10, 0, height / 10);
         for (int i = 0; i < groundAndRoof.Count; i++)
         {
@@ -75,7 +75,8 @@ public class MazeRenderer : MonoBehaviour
         }
     }
 
-    private void GenerateWall(WallState node, WallState wallState, float x, float y, Vector2 offset, float yRot, bool ignoreValue)
+    private void GenerateWall(WallState node, WallState wallState, float x, float y, Vector2 offset, float yRot, bool ignoreValue, 
+        Vector3 offsetPos)
     {
         if (node.HasFlag(wallState) && !ignoreValue)
         {
@@ -88,7 +89,7 @@ public class MazeRenderer : MonoBehaviour
             wallPool.RemoveAt(0);
 
             wall.gameObject.SetActive(true);
-            wall.position = new Vector3(x - offset.x, 0, y - offset.y);
+            wall.position = new Vector3(-width / 2 + x, 0, -height / 2 + y) + offsetPos;
             wall.eulerAngles = new Vector3(0, yRot, 0);
             activeWalls.Add(wall);
         }
