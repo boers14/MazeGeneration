@@ -10,8 +10,6 @@ public class MazeRenderer : MonoBehaviour
     [SerializeField]
     private Transform wallPrefab = null, planePrefab = null;
 
-    private float baseOffset = 1;
-
     private List<Transform> wallPool = new List<Transform>(), activeWalls = new List<Transform>(), 
         groundAndRoof = new List<Transform>();
 
@@ -32,8 +30,7 @@ public class MazeRenderer : MonoBehaviour
         CreatePlane(new Vector3(0, -wallPrefab.localScale.y / 2, 0), Vector3.zero);
         CreatePlane(new Vector3(0, wallPrefab.localScale.y / 2, 0), new Vector3(180, 0, 0));
 
-        AddWallsToPool(500);
-        baseOffset = wallPrefab.localScale.x / 2;
+        AddWallsToPool(5000);
         GenerateMaze(MazeGenerator.GenerateMaze(width, height, MazeGenerator.MazeType.RecursiveBackTracking));
     }
 
@@ -59,14 +56,14 @@ public class MazeRenderer : MonoBehaviour
             for (int j = 0; j < height; j++)
             {
                 WallState node = walls[i, j];
-                GenerateWall(node, WallState.Right, i, j, new Vector2(baseOffset, 0), 0, i == width - 1, new Vector3(0.5f, 0, 0));
-                GenerateWall(node, WallState.Down, i, j, new Vector2(0, -baseOffset), 90, j == 0, new Vector3(0, 0, -0.5f));
-                GenerateWall(node, WallState.Left, i, j, new Vector2(-baseOffset, 0), 180, false, new Vector3(-0.5f, 0, 0));
-                GenerateWall(node, WallState.Up, i, j, new Vector2(0, baseOffset), 270, false, new Vector3(0, 0, 0.5f));
+                GenerateWall(node, WallState.Right, i, j, 0, i == width - 1, new Vector3(0.5f, 0, 0), j == 0);
+                GenerateWall(node, WallState.Down, i, j, 90, j == 0 || i < width - 1, new Vector3(0, 0, -0.5f), i == width - 1);
+                GenerateWall(node, WallState.Left, i, j, 180, i == 0 || j < height - 1, new Vector3(-0.5f, 0, 0), j == height - 1);
+                GenerateWall(node, WallState.Up, i, j, 270, j == height - 1, new Vector3(0, 0, 0.5f), i == 0);
             }
         }
 
-        Vector3 newPos = new Vector3(-1, 0, 0);
+        Vector3 newPos = new Vector3(-0.5f, 0, -0.5f);
         Vector3 newScale = new Vector3(width / 10, 0, height / 10);
         for (int i = 0; i < groundAndRoof.Count; i++)
         {
@@ -75,31 +72,43 @@ public class MazeRenderer : MonoBehaviour
         }
     }
 
-    private void GenerateWall(WallState node, WallState wallState, float x, float y, Vector2 offset, float yRot, bool ignoreValue, 
-        Vector3 offsetPos)
+    private void GenerateWall(WallState node, WallState wallState, float x, float y, float yRot, bool ignoreValue, Vector3 offset,
+        bool alwaysCreateWall)
     {
-        if (node.HasFlag(wallState) && !ignoreValue)
+        if (!ignoreValue)
         {
-            if (wallPool.Count == 0)
+            if (node.HasFlag(wallState))
             {
-                AddWallsToPool(5);
+                CreateWall(x, y, offset, yRot);
             }
-
-            Transform wall = wallPool[0];
-            wallPool.RemoveAt(0);
-
-            wall.gameObject.SetActive(true);
-            wall.position = new Vector3(-width / 2 + x, 0, -height / 2 + y) + offsetPos;
-            wall.eulerAngles = new Vector3(0, yRot, 0);
-            activeWalls.Add(wall);
+            else if (alwaysCreateWall)
+            {
+                CreateWall(x, y, offset, yRot);
+            }
         }
+    }
+
+    private void CreateWall(float x, float y, Vector3 offset, float yRot)
+    {
+        if (wallPool.Count == 0)
+        {
+            AddWallsToPool(5);
+        }
+
+        Transform wall = wallPool[0];
+        wallPool.RemoveAt(0);
+
+        wall.gameObject.SetActive(true);
+        wall.position = new Vector3(-width / 2 + x, 0, -height / 2 + y) + offset;
+        wall.eulerAngles = new Vector3(0, yRot, 0);
+        activeWalls.Add(wall);
     }
 
     private void AddWallsToPool(int count)
     {
         for (int i = 0; i < count; i++)
         {
-            Transform newWall = Instantiate(wallPrefab);
+            Transform newWall = Instantiate(wallPrefab, transform);
             newWall.gameObject.SetActive(false);
             wallPool.Add(newWall);
         }
