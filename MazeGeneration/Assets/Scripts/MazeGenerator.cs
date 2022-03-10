@@ -53,27 +53,10 @@ public static class MazeGenerator
 
                 if (neighbourPos.x != current.x)
                 {
-                    if (neighbourPos.x > current.x)
-                    {
-                        maze[current.x, current.y].direction = WallState.Direction.Right;
-                        maze[neighbourPos.x, neighbourPos.y].direction = WallState.Direction.Left;
-                    } else
-                    {
-                        maze[current.x, current.y].direction = WallState.Direction.Left;
-                        maze[neighbourPos.x, neighbourPos.y].direction = WallState.Direction.Right;
-                    }
+                    SetDirectionOfNode(current, neighbourPos, WallState.Direction.Right, WallState.Direction.Left, maze);
                 } else
                 {
-                    if (neighbourPos.y > current.y)
-                    {
-                        maze[current.x, current.y].direction = WallState.Direction.Up;
-                        maze[neighbourPos.x, neighbourPos.y].direction = WallState.Direction.Down;
-                    }
-                    else
-                    {
-                        maze[current.x, current.y].direction = WallState.Direction.Down;
-                        maze[neighbourPos.x, neighbourPos.y].direction = WallState.Direction.Up;
-                    }
+                    SetDirectionOfNode(current, neighbourPos, WallState.Direction.Up, WallState.Direction.Down, maze);
                 }
 
                 maze[neighbourPos.x, neighbourPos.y].visited = true;
@@ -83,6 +66,21 @@ public static class MazeGenerator
         }
 
         return maze;
+    }
+
+    private static void SetDirectionOfNode(Position current, Position neighbourPos, WallState.Direction positiveDirection,
+        WallState.Direction negativeDirection, WallState[,] maze)
+    {
+        if (neighbourPos.x > current.x)
+        {
+            maze[current.x, current.y].direction = positiveDirection;
+            maze[neighbourPos.x, neighbourPos.y].direction = negativeDirection;
+        }
+        else
+        {
+            maze[current.x, current.y].direction = negativeDirection;
+            maze[neighbourPos.x, neighbourPos.y].direction = positiveDirection;
+        }
     }
 
     private static List<Neighbour> GetUnvisitedNeighbours(Position pos, WallState[,] maze, int width, int height)

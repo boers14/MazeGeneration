@@ -15,6 +15,9 @@ public class MazeRenderer : MonoBehaviour
 
     public static MazeRenderer instance = null;
 
+    private Vector3 rightOffset = new Vector3(0.5f, 0, 0), leftOffset = new Vector3(-0.5f, 0, 0), 
+        downOffset = new Vector3(0, 0, -0.5f), upOffset = new Vector3(0, 0, 0.5f);
+
     private void Start()
     {
         if (!instance)
@@ -57,26 +60,38 @@ public class MazeRenderer : MonoBehaviour
             {
                 WallState node = walls[i, j];
 
-                switch(node.direction)
+                switch (node.direction)
                 {
                     case WallState.Direction.Right:
-                        CreateWall(i, j, new Vector3(0.5f, 0, 0), 0);
+                        CreateWall(i, j, rightOffset, 0, false);
                         break;
                     case WallState.Direction.Left:
-                        CreateWall(i, j, new Vector3(-0.5f, 0, 0), 180);
+                        CreateWall(i, j, leftOffset, 180, false);
                         break;
                     case WallState.Direction.Down:
-                        CreateWall(i, j, new Vector3(0, 0, -0.5f), 90);
+                        CreateWall(i, j, downOffset, 90, j == 0);
                         break;
                     case WallState.Direction.Up:
-                        CreateWall(i, j, new Vector3(0, 0, 0.5f), 270);
+                        CreateWall(i, j, upOffset, 270, j == height - 1);
                         break;
                 }
             }
         }
 
+        for (int i = -1; i < width; i++)
+        {
+            CreateWall(i, -1, rightOffset, 0, false);
+            CreateWall(i, height, rightOffset, 0, false);
+        }
+
+        for (int i = -1; i < height; i++)
+        {
+            CreateWall(-1, i, upOffset, 90, false);
+            CreateWall(width, i + 1, downOffset, 90, false);
+        }
+
         Vector3 newPos = new Vector3(-0.5f, 0, -0.5f);
-        Vector3 newScale = new Vector3(width / 10, 0, height / 10);
+        Vector3 newScale = new Vector3(ReturnScaleOfPlane(width), 0, ReturnScaleOfPlane(height));
         for (int i = 0; i < groundAndRoof.Count; i++)
         {
             groundAndRoof[i].position = new Vector3(newPos.x, groundAndRoof[i].position.y, newPos.z);
@@ -84,8 +99,15 @@ public class MazeRenderer : MonoBehaviour
         }
     }
 
-    private void CreateWall(float x, float y, Vector3 offset, float yRot)
+    private float ReturnScaleOfPlane(int value)
     {
+        return (value / 10) + 0.1f;
+    }
+
+    private void CreateWall(float x, float y, Vector3 offset, float yRot , bool dontCreate)
+    {
+        if (dontCreate) { return; }
+
         if (wallPool.Count == 0)
         {
             AddWallsToPool(5);
