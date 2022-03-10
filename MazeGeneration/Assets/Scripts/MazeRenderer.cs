@@ -51,56 +51,26 @@ public class MazeRenderer : MonoBehaviour
         }
         activeWalls.Clear();
 
-        Vector3 removedWallPos = Vector3.zero;
-        int wallNumber = 0;
-        int outerSide = 0;
-        bool widthOuterWall = false;
-        Vector2Int randomOuterWall = new Vector2Int(Random.Range(0, width), Random.Range(0, height));
-
-        if ((int)Random.Range(1, 11) % 2 == 0)
-        {
-            widthOuterWall = true;
-            outerSide = ReturnOuterSide(outerSide, height - 1);
-            wallNumber = ReturnWallNumber(randomOuterWall.x, outerSide, width - 1, height - 1);
-        } else
-        {
-            outerSide = ReturnOuterSide(outerSide, width - 1);
-            wallNumber = ReturnWallNumber(randomOuterWall.y, outerSide, height - 1, width - 1);
-        }
-
         for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < height; j++)
             {
                 WallState node = walls[i, j];
 
-                bool createWall = true;
-                if (widthOuterWall)
+                switch(node.direction)
                 {
-                    if (j == outerSide && i == wallNumber)
-                    {
-                        createWall = false;
-                        removedWallPos = ReturnRemovedWallPos(outerSide, i, j, new Vector3(0.5f, 0, 0), new Vector3(-0.5f, 0, 0));
-                    }
-                } else
-                {
-                    if (i == outerSide && j == wallNumber)
-                    {
-                        createWall = false;
-                        removedWallPos = ReturnRemovedWallPos(outerSide, i, j, new Vector3(0, 0, 0.5f), new Vector3(0, 0, 0));
-                    }
-                }
-
-                if (!widthOuterWall || createWall)
-                {
-                    GenerateWall(node, WallState.Right, i, j, 0, i == width - 1, new Vector3(0.5f, 0, 0), j == 0);
-                    GenerateWall(node, WallState.Left, i, j, 180, i == 0 || j < height - 1, new Vector3(-0.5f, 0, 0), j == height - 1);
-                }
-
-                if (widthOuterWall || createWall)
-                {
-                    GenerateWall(node, WallState.Down, i, j, 90, j == 0 || i < width - 1, new Vector3(0, 0, -0.5f), i == width - 1);
-                    GenerateWall(node, WallState.Up, i, j, 270, j == height - 1, new Vector3(0, 0, 0.5f), i == 0);
+                    case WallState.Direction.Right:
+                        CreateWall(i, j, new Vector3(0.5f, 0, 0), 0);
+                        break;
+                    case WallState.Direction.Left:
+                        CreateWall(i, j, new Vector3(-0.5f, 0, 0), 180);
+                        break;
+                    case WallState.Direction.Down:
+                        CreateWall(i, j, new Vector3(0, 0, -0.5f), 90);
+                        break;
+                    case WallState.Direction.Up:
+                        CreateWall(i, j, new Vector3(0, 0, 0.5f), 270);
+                        break;
                 }
             }
         }
@@ -111,64 +81,6 @@ public class MazeRenderer : MonoBehaviour
         {
             groundAndRoof[i].position = new Vector3(newPos.x, groundAndRoof[i].position.y, newPos.z);
             groundAndRoof[i].localScale = new Vector3(newScale.x, groundAndRoof[i].localScale.y, newScale.z);
-        }
-
-        Transform wallToRemove = activeWalls.Find(wall => wall.transform.position == removedWallPos);
-        if (wallToRemove)
-        {
-            print("hi");
-            wallToRemove.gameObject.SetActive(false);
-        }
-    }
-
-    private int ReturnWallNumber(int wallValue, int outerSide, int maxValueWall, int maxValueOuterSide)
-    {
-        if (outerSide == 0 && wallValue == maxValueWall)
-        {
-            wallValue -= 1;
-        } else if (outerSide == maxValueOuterSide && wallValue == 0)
-        {
-            wallValue += 1;
-        }
-
-        return wallValue;
-    }
-
-    private int ReturnOuterSide(int outerSide, int valueToChangeTo)
-    {
-        if ((int)Random.Range(1, 11) % 2 == 0)
-        {
-            outerSide = valueToChangeTo;
-        }
-
-        return outerSide;
-    }
-
-    private Vector3 ReturnRemovedWallPos(int outerSide, int x, int y, Vector3 positiveOffset, Vector3 negativeOffset)
-    {
-        Vector3 basePos = new Vector3(-width / 2 + x, 0, -height / 2 + y);
-        if (outerSide == 0)
-        {
-            return basePos + positiveOffset;
-        } else
-        {
-            return basePos + negativeOffset;
-        }
-    }
-
-    private void GenerateWall(WallState node, WallState wallState, float x, float y, float yRot, bool ignoreValue, Vector3 offset,
-        bool alwaysCreateWall)
-    {
-        if (!ignoreValue)
-        {
-            if (node.HasFlag(wallState))
-            {
-                CreateWall(x, y, offset, yRot);
-            }
-            else if (alwaysCreateWall)
-            {
-                CreateWall(x, y, offset, yRot);
-            }
         }
     }
 

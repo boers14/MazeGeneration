@@ -3,25 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-[Flags]
-public enum WallState
+public class WallState
 {
-    Left = 1,
-    Right = 2,
-    Up = 4,
-    Down = 8,
+    public enum Direction {
+        None,
+        Left,
+        Right,
+        Up,
+        Down,
+    }
 
-    Visited= 128
-}
-
-public struct Position
-{
-    public int X;
-    public int Y;
-}
-
-public struct Neighbour
-{
-    public Position Position;
-    public WallState SharedWall;
+    public bool visited = false;
+    public Direction direction = Direction.None;
 }
