@@ -35,6 +35,14 @@ public class MazeRenderer : MonoBehaviour
         AddWallsToPool(5000);
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+    }
+
     public void StartGenerateMaze(int width, int height)
     {
         this.width = width;
@@ -44,12 +52,7 @@ public class MazeRenderer : MonoBehaviour
 
     private void GenerateMaze(WallState[,] walls)
     {
-        for (int i = activeWalls.Count - 1; i >= 0; i--)
-        {
-            activeWalls[i].gameObject.SetActive(false);
-            wallPool.Add(activeWalls[i]);
-        }
-        activeWalls.Clear();
+        ClearMaze();
 
         for (int i = 0; i < width; i++)
         {
@@ -135,5 +138,20 @@ public class MazeRenderer : MonoBehaviour
         newPlane.eulerAngles = rot;
         newPlane.gameObject.SetActive(false);
         groundAndRoof.Add(newPlane);
+    }
+
+    public void ClearMaze()
+    {
+        for (int i = activeWalls.Count - 1; i >= 0; i--)
+        {
+            activeWalls[i].gameObject.SetActive(false);
+            wallPool.Add(activeWalls[i]);
+        }
+        activeWalls.Clear();
+
+        for (int i = 0; i < groundAndRoof.Count; i++)
+        {
+            groundAndRoof[i].gameObject.SetActive(false);
+        }
     }
 }

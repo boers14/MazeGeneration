@@ -8,9 +8,9 @@ public class StartGameButton : SwitchActiveStateButton
     [SerializeField]
     private int widthGameMaze = 50, heightGameMaze = 30;
 
-    public override void Start()
+    public override void Awake()
     {
-        base.Start();
+        base.Awake();
         GetComponent<Button>().onClick.AddListener(StartGame);
     }
 

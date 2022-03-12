@@ -483,7 +483,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &135237285
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1574,6 +1574,7 @@ GameObject:
   - component: {fileID: 963194228}
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
+  - component: {fileID: 963194229}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1639,13 +1640,26 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 1, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!114 &963194229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32bebf205a99e644ab1bf7c9c24874bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 0.1
 --- !u!1 &1030715159
 GameObject:
   m_ObjectHideFlags: 0
@@ -2089,7 +2103,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1133622691}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf8915024f9f0b0488a2e9db9e4a6cec, type: 3}
+  m_Script: {fileID: 11500000, guid: 642e6438376c24444944861eef2562cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   xSize: 0.3
@@ -2104,6 +2118,7 @@ MonoBehaviour:
   - {fileID: 135237284}
   objectsToSwitchActiveState:
   - {fileID: 1720212506}
+  mainMenuButton: 1
 --- !u!1 &1137132150
 GameObject:
   m_ObjectHideFlags: 0
@@ -3344,7 +3359,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1418102447}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf8915024f9f0b0488a2e9db9e4a6cec, type: 3}
+  m_Script: {fileID: 11500000, guid: 642e6438376c24444944861eef2562cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   xSize: 0.1
@@ -3359,6 +3374,7 @@ MonoBehaviour:
   - {fileID: 1720212506}
   objectsToSwitchActiveState:
   - {fileID: 135237284}
+  mainMenuButton: 0
 --- !u!114 &1418102450
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3457,7 +3473,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1720212507
 RectTransform:
   m_ObjectHideFlags: 0

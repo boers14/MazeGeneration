@@ -24,9 +24,9 @@ public class SetUIStats : DisableAutoSize
     [System.NonSerialized]
     public Vector2 size = Vector2.zero;
 
-    public override void Start()
+    public override void Awake()
     {
-        base.Start();
+        base.Awake();
         rectTransform = GetComponent<RectTransform>();
         canvas = FindObjectOfType<Canvas>();
         canvasRectTransform = canvas.GetComponent<RectTransform>();

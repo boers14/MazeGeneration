@@ -6,17 +6,24 @@ using TMPro;
 
 public class GenerateMazeButton : SetUIStats
 {
+    private new FlyCamera camera = null;
+
     [SerializeField]
     private TMP_InputField widthInput = null, lenghtInput = null;
 
-    public override void Start()
+    public override void Awake()
     {
-        base.Start();
+        base.Awake();
         GetComponent<Button>().onClick.AddListener(GenerateMaze);
+        camera = Camera.main.GetComponent<FlyCamera>();
     }
 
     private void GenerateMaze()
     {
-        MazeRenderer.instance.StartGenerateMaze(int.Parse(widthInput.text), int.Parse(lenghtInput.text));
+        int width = int.Parse(widthInput.text);
+        int lenght = int.Parse(lenghtInput.text);
+
+        MazeRenderer.instance.StartGenerateMaze(width, lenght);
+        camera.SetZoom(width, lenght);
     }
 }

@@ -8,9 +8,9 @@ public class SwitchActiveStateButton : SetUIStats
     [SerializeField]
     private List<GameObject> objectsToDisable = new List<GameObject>(), objectsToSwitchActiveState = new List<GameObject>();
 
-    public override void Start()
+    public override void Awake()
     {
-        base.Start();
+        base.Awake();
         GetComponent<Button>().onClick.AddListener(SwitchActiveState);
     }
 

@@ -5,7 +5,7 @@ using TMPro;
 
 public class DisableAutoSize : MonoBehaviour
 {
-    public virtual void Start()
+    public virtual void Awake()
     {
         StartCoroutine(StopAutoSize());
     }
