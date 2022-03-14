@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.4366757, g: 0.48427194, b: 0.5645252, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1147,7 +1147,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!108 &705507994
 Light:
   m_ObjectHideFlags: 0
@@ -1217,13 +1217,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705507993}
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1 &769622858
 GameObject:
   m_ObjectHideFlags: 0
@@ -1416,6 +1416,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   wallPrefab: {fileID: 5532930590037456518, guid: 503786d5316f57e43b747b1211380194, type: 3}
   planePrefab: {fileID: 2408308427508762923, guid: df614a9909d775841b11d61e0982a324, type: 3}
+  mazeWallSize: 2.5
 --- !u!1 &844423734
 GameObject:
   m_ObjectHideFlags: 0
@@ -1575,6 +1576,7 @@ GameObject:
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
   - component: {fileID: 963194229}
+  - component: {fileID: 963194230}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1660,6 +1662,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 0.1
+--- !u!114 &963194230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97211c065bacc334294ffb26a20c0cd2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sensitivity: 5
+  smoothing: 2
+  posComparedToPlayer: {x: 0, y: 0.43, z: -0.1}
 --- !u!1 &1030715159
 GameObject:
   m_ObjectHideFlags: 0
@@ -2331,7 +2348,9 @@ MonoBehaviour:
     E - Throw bomb
 
     Q
-    - See map
+    - See map / upgrade
+
+    Shift - Sprint
 
     ESC - Close game
 
@@ -2362,7 +2381,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18.85
+  m_fontSize: 15.7
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2574,10 +2593,12 @@ MonoBehaviour:
   yPos: -0.03
   iterateThroughtChilds: 1
   isInList: 0
-  objectsToDisable: []
+  objectsToDisable:
+  - {fileID: 135237284}
   objectsToSwitchActiveState: []
   widthGameMaze: 50
   heightGameMaze: 30
+  playerPrefab: {fileID: 743160074090033292, guid: 9ccae935995ea5f4090f57aad43cc6b5, type: 3}
 --- !u!1 &1316824058
 GameObject:
   m_ObjectHideFlags: 0

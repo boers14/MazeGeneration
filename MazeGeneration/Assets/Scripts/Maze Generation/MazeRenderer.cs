@@ -7,6 +7,9 @@ public class MazeRenderer : MonoBehaviour
     [SerializeField]
     private Transform wallPrefab = null, planePrefab = null;
 
+    [SerializeField]
+    private float mazeWallSize = 2;
+
     private List<Transform> wallPool = new List<Transform>(), activeWalls = new List<Transform>(), 
         groundAndRoof = new List<Transform>();
 
@@ -14,6 +17,9 @@ public class MazeRenderer : MonoBehaviour
 
     private Vector3 rightOffset = new Vector3(0.5f, 0, 0), leftOffset = new Vector3(-0.5f, 0, 0), 
         downOffset = new Vector3(0, 0, -0.5f), upOffset = new Vector3(0, 0, 0.5f);
+
+    [System.NonSerialized]
+    public Vector3 centerMazePos = Vector3.zero;
 
     private int width = 50, height = 30;
 
@@ -28,6 +34,11 @@ public class MazeRenderer : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+
+        rightOffset *= mazeWallSize;
+        leftOffset *= mazeWallSize;
+        downOffset *= mazeWallSize;
+        upOffset *= mazeWallSize;
 
         CreatePlane(new Vector3(0, -wallPrefab.localScale.y / 2, 0), Vector3.zero);
         CreatePlane(new Vector3(0, wallPrefab.localScale.y / 2, 0), new Vector3(180, 0, 0));
@@ -90,19 +101,24 @@ public class MazeRenderer : MonoBehaviour
             CreateWall(width, i + 1, downOffset, 90);
         }
 
-        Vector3 newPos = new Vector3(-0.5f, 0, -0.5f);
+        centerMazePos = new Vector3(ReturnPosOfPlane(width), 0, ReturnPosOfPlane(height));
         Vector3 newScale = new Vector3(ReturnScaleOfPlane(width), 0, ReturnScaleOfPlane(height));
         for (int i = 0; i < groundAndRoof.Count; i++)
         {
-            groundAndRoof[i].position = new Vector3(newPos.x, groundAndRoof[i].position.y, newPos.z);
+            groundAndRoof[i].position = new Vector3(centerMazePos.x, groundAndRoof[i].position.y, centerMazePos.z);
             groundAndRoof[i].localScale = new Vector3(newScale.x, groundAndRoof[i].localScale.y, newScale.z);
             groundAndRoof[i].gameObject.SetActive(true);
         }
     }
 
+    private float ReturnPosOfPlane(int value)
+    {
+        return -value / 2 + value / 2 * mazeWallSize - 0.5f * mazeWallSize;
+    }
+
     private float ReturnScaleOfPlane(int value)
     {
-        return (value / 10) + 0.1f;
+        return (value * mazeWallSize / 10) + (mazeWallSize / 10);
     }
 
     private void CreateWall(float x, float y, Vector3 offset, float yRot)
@@ -116,8 +132,9 @@ public class MazeRenderer : MonoBehaviour
         wallPool.RemoveAt(0);
 
         wall.gameObject.SetActive(true);
-        wall.position = new Vector3(-width / 2 + x, 0, -height / 2 + y) + offset;
+        wall.position = new Vector3(-width / 2 + x * mazeWallSize, 0, -height / 2 + y * mazeWallSize) + offset;
         wall.eulerAngles = new Vector3(0, yRot, 0);
+        wall.localScale = new Vector3(wall.localScale.x * mazeWallSize, wall.localScale.y, wall.localScale.z);
         activeWalls.Add(wall);
     }
 
