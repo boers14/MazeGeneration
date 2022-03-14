@@ -1615,7 +1615,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: 0.1
   far clip plane: 1000
   field of view: 60
   orthographic: 0
@@ -1674,9 +1674,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97211c065bacc334294ffb26a20c0cd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sensitivity: 5
-  smoothing: 2
-  posComparedToPlayer: {x: 0, y: 0.43, z: -0.1}
+  sensitivity: 4
+  smoothing: 4
+  posComparedToPlayer: {x: 0, y: 0.5, z: 0}
 --- !u!1 &1030715159
 GameObject:
   m_ObjectHideFlags: 0

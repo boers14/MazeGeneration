@@ -12,7 +12,7 @@ public class PlayerCamera : MonoBehaviour
     [SerializeField]
     private Vector3 posComparedToPlayer = Vector3.zero;
 
-    private Transform player = null;
+    private Transform player = null, gun = null;
 
     private void FixedUpdate()
     {
@@ -27,6 +27,7 @@ public class PlayerCamera : MonoBehaviour
         mouseLook.y = Mathf.Clamp(mouseLook.y, -40f, 80f);
 
         transform.localRotation = Quaternion.AngleAxis(-mouseLook.y, Vector3.right);
+        gun.localRotation = Quaternion.AngleAxis(-mouseLook.y, Vector3.right);
         player.localRotation = Quaternion.AngleAxis(mouseLook.x, player.up);
     }
 
@@ -34,6 +35,7 @@ public class PlayerCamera : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         player = FindObjectOfType<PlayerMovement>().transform;
+        gun = player.GetChild(0);
         transform.SetParent(player);
         transform.localPosition = posComparedToPlayer;
         enabled = true;
