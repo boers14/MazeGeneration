@@ -2,16 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MazeRenderer : MonoBehaviour
+public class MazeRenderer : ObjectPool
 {
     [SerializeField]
-    private Transform wallPrefab = null, planePrefab = null;
+    private Transform planePrefab = null;
 
-    [SerializeField]
-    private float mazeWallSize = 2;
+    public float mazeWallSize = 2;
 
-    private List<Transform> wallPool = new List<Transform>(), activeWalls = new List<Transform>(), 
-        groundAndRoof = new List<Transform>();
+    private List<Transform> groundAndRoof = new List<Transform>();
 
     public static MazeRenderer instance = null;
 
@@ -23,7 +21,7 @@ public class MazeRenderer : MonoBehaviour
 
     private int width = 50, height = 30;
 
-    private void Start()
+    public override void Start()
     {
         if (!instance)
         {
@@ -35,15 +33,17 @@ public class MazeRenderer : MonoBehaviour
             return;
         }
 
+        base.Start();
+
         rightOffset *= mazeWallSize;
         leftOffset *= mazeWallSize;
         downOffset *= mazeWallSize;
         upOffset *= mazeWallSize;
 
-        CreatePlane(new Vector3(0, -wallPrefab.localScale.y / 2, 0), Vector3.zero);
-        CreatePlane(new Vector3(0, wallPrefab.localScale.y / 2, 0), new Vector3(180, 0, 0));
+        CreatePlane(new Vector3(0, -objectForPool.localScale.y / 2, 0), Vector3.zero);
+        CreatePlane(new Vector3(0, objectForPool.localScale.y / 2, 0), new Vector3(180, 0, 0));
 
-        AddWallsToPool(5000);
+        AddObjectsToPool(5000);
     }
 
     private void Update()
@@ -111,41 +111,37 @@ public class MazeRenderer : MonoBehaviour
         }
     }
 
-    private float ReturnPosOfPlane(int value)
+    private float ReturnPosOfPlane(float value)
     {
-        return -value / 2 + value / 2 * mazeWallSize - 0.5f * mazeWallSize;
+        if (value % 2 == 0)
+        {
+            return (-value / 2f) + (value / 2f * mazeWallSize) - (0.5f * mazeWallSize);
+        } else
+        {
+            return (-value / 2f) + (value / 2f * mazeWallSize) - (0.5f * mazeWallSize) + 0.5f;
+        }
     }
 
-    private float ReturnScaleOfPlane(int value)
+    private float ReturnScaleOfPlane(float value)
     {
-        return (value * mazeWallSize / 10) + (mazeWallSize / 10);
+        return (value * mazeWallSize / 10f) + (mazeWallSize / 10f);
     }
 
     private void CreateWall(float x, float y, Vector3 offset, float yRot)
     {
-        if (wallPool.Count == 0)
+        if (objectPool.Count == 0)
         {
-            AddWallsToPool(5);
+            AddObjectsToPool(5);
         }
 
-        Transform wall = wallPool[0];
-        wallPool.RemoveAt(0);
+        Transform wall = objectPool[0];
+        objectPool.RemoveAt(0);
 
         wall.gameObject.SetActive(true);
         wall.position = new Vector3(-width / 2 + x * mazeWallSize, 0, -height / 2 + y * mazeWallSize) + offset;
         wall.eulerAngles = new Vector3(0, yRot, 0);
-        wall.localScale = new Vector3(wall.localScale.x * mazeWallSize, wall.localScale.y, wall.localScale.z);
-        activeWalls.Add(wall);
-    }
-
-    private void AddWallsToPool(int count)
-    {
-        for (int i = 0; i < count; i++)
-        {
-            Transform newWall = Instantiate(wallPrefab, transform);
-            newWall.gameObject.SetActive(false);
-            wallPool.Add(newWall);
-        }
+        wall.localScale = new Vector3(mazeWallSize, wall.localScale.y, wall.localScale.z);
+        activeObjects.Add(wall);
     }
 
     private void CreatePlane (Vector3 pos, Vector3 rot)
@@ -157,15 +153,22 @@ public class MazeRenderer : MonoBehaviour
         groundAndRoof.Add(newPlane);
     }
 
+    public void RemoveDoubleWalls()
+    {
+        for (int i = activeObjects.Count - 1; i >= 0 ; i--)
+        {
+            List<Transform> objectsOnSamePos = activeObjects.FindAll(wall => wall.position == activeObjects[i].position);
+            if (objectsOnSamePos.Count > 1)
+            {
+                objectPool.Add(activeObjects[i]);
+                activeObjects.Remove(activeObjects[i]);
+            }
+        }
+    }
+
     public void ClearMaze()
     {
-        for (int i = activeWalls.Count - 1; i >= 0; i--)
-        {
-            activeWalls[i].gameObject.SetActive(false);
-            wallPool.Add(activeWalls[i]);
-        }
-        activeWalls.Clear();
-
+        ReturnAllObjectsToPool();
         for (int i = 0; i < groundAndRoof.Count; i++)
         {
             groundAndRoof[i].gameObject.SetActive(false);

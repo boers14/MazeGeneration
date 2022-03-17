@@ -48,12 +48,12 @@ public class FlyCamera : MonoBehaviour
         float lenghtZoom = ReturnZoom(canvasSize.y, lenght);
 
         float neededZoom = widthZoom > lenghtZoom ? widthZoom : lenghtZoom;
-        transform.position = new Vector3(0, neededZoom, 0);
+        transform.position = new Vector3(MazeRenderer.instance.centerMazePos.x, neededZoom, MazeRenderer.instance.centerMazePos.z);
         transform.eulerAngles = new Vector3(90, 0, 0);
     }
 
     private float ReturnZoom(float canvasSize, float direction)
     {
-        return canvasSize * (direction / canvasSize) * 0.8f;
+        return canvasSize * (direction / canvasSize) * MazeRenderer.instance.mazeWallSize;
     }
 }

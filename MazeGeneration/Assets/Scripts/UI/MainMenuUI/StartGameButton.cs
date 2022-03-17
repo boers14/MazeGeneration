@@ -11,7 +11,17 @@ public class StartGameButton : SwitchActiveStateButton
     [SerializeField]
     private GameObject playerPrefab = null;
 
+    [SerializeField]
+    private SetPostProcessingSize postProcessingPrefab = null;
+
+    [SerializeField]
+    private EnvironmentParticles environmentParticlesPrefab = null;
+
     private GameObject currentPlayer = null;
+
+    private SetPostProcessingSize currentPostProcessing = null;
+
+    private EnvironmentParticles currentEnvironmentParticles = null;
 
     private new PlayerCamera camera = null;
 
@@ -25,8 +35,14 @@ public class StartGameButton : SwitchActiveStateButton
     private void StartGame()
     {
         MazeRenderer.instance.StartGenerateMaze(widthGameMaze, heightGameMaze);
+        MazeRenderer.instance.RemoveDoubleWalls();
         if (!currentPlayer)
         {
+            currentPostProcessing = Instantiate(postProcessingPrefab);
+            currentPostProcessing.SetPostProcessingBoxSize(widthGameMaze, heightGameMaze);
+
+            currentEnvironmentParticles = Instantiate(environmentParticlesPrefab);
+
             currentPlayer = Instantiate(playerPrefab);
             currentPlayer.transform.position = new Vector3(MazeRenderer.instance.centerMazePos.x, 
                 currentPlayer.transform.localScale.y, MazeRenderer.instance.centerMazePos.z);
