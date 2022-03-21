@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 5141732813222973543}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -158,7 +158,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 777363017630784324}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.5, y: -0.005, z: 0.593}
+  m_LocalPosition: {x: 0.5, y: -0.005, z: 0.799}
   m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_Children:
   - {fileID: 1080188999921927281}
@@ -5042,6 +5042,7 @@ MonoBehaviour:
   typeOfExplosions:
   - {fileID: 172010023857937845, guid: f7bfd66e8f1733c4cae396c946532126, type: 3}
   - {fileID: 172010023857937845, guid: 0472f3833b0386548a4379d72eaa1e58, type: 3}
+  - {fileID: 172010023857937845, guid: 6863dcd61c26c5e47901d4eb9562eba3, type: 3}
 --- !u!1 &8220327148261757262
 GameObject:
   m_ObjectHideFlags: 0

@@ -9,7 +9,10 @@ public class PathfindingGrid : MonoBehaviour
 
     private int xSize = 0, ySize = 0;
 
-    private float addedX = 0, startX = 0, addedZ = 0, startZ = 0;
+    [System.NonSerialized]
+    public float startX = 0, endX = 0, startZ = 0, endZ = 0;
+
+    private float addedX = 0, addedZ = 0;
 
     [SerializeField]
     private int amountOfNodesComparedToMazeSize = 3;
@@ -17,12 +20,6 @@ public class PathfindingGrid : MonoBehaviour
     private PathfindingNode[,] grid = null;
 
     public static PathfindingGrid instance = null;
-
-    [SerializeField]
-    private Enemy enemy = null;
-
-    [SerializeField]
-    private GameObject spherePrefab = null;
 
     private void Start()
     {
@@ -33,15 +30,6 @@ public class PathfindingGrid : MonoBehaviour
         {
             Destroy(gameObject);
             return;
-        }
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Enemy newEnemy = Instantiate(enemy);
-            newEnemy.transform.position = new Vector3(Random.Range(-20, 120), 0.5f, Random.Range(-20, 120));
         }
     }
 
@@ -59,19 +47,18 @@ public class PathfindingGrid : MonoBehaviour
 
         List<Transform> wallPool = MazeRenderer.instance.activeObjects;
 
-        float biggestX = 0, biggestZ = 0;
         for (int i= 0; i < wallPool.Count; i++)
         {
             startX = CheckIfShouldChangeValue(wallPool[i].position.x < startX, startX, wallPool[i].position.x);
-            biggestX = CheckIfShouldChangeValue(wallPool[i].position.x > biggestX, biggestX, wallPool[i].position.x);
+            endX = CheckIfShouldChangeValue(wallPool[i].position.x > endX, endX, wallPool[i].position.x);
             startZ = CheckIfShouldChangeValue(wallPool[i].position.z < startZ, startZ, wallPool[i].position.z);
-            biggestZ = CheckIfShouldChangeValue(wallPool[i].position.z > biggestZ, biggestZ, wallPool[i].position.z);
+            endZ = CheckIfShouldChangeValue(wallPool[i].position.z > endZ, endZ, wallPool[i].position.z);
         }
 
         float xPos = startX;
         float zPos = startZ;
-        addedX = (biggestX - startX) / xSize;
-        addedZ = (biggestZ - startZ) / ySize;
+        addedX = (endX - startX) / xSize;
+        addedZ = (endZ - startZ) / ySize;
 
         grid = new PathfindingNode[xSize + 1, ySize + 1];
         for (int y = 0; y <= ySize; y++)
@@ -94,6 +81,8 @@ public class PathfindingGrid : MonoBehaviour
             zPos += addedZ;
             xPos = startX;
         }
+
+        EnemyManager.instance.FindPlayerObject();
     }
 
     private float CheckIfShouldChangeValue(bool shouldChange, float oldValue, float newValue)
@@ -106,30 +95,10 @@ public class PathfindingGrid : MonoBehaviour
         return oldValue;
     }
 
-    public PathfindingNode NodeFromWorldPos(Vector3 worldPos, PathfindingNode prevNote = null)
+    public PathfindingNode NodeFromWorldPos(Vector3 worldPos)
     {
         int x = (int)((worldPos.x - startX) / addedX);
         int y = (int)((worldPos.z - startZ) / addedZ);
-
-        //if (prevNote != null)
-        //{
-        //    if (prevNote.GetGridX() - x > 5)
-        //    {
-        //        x = prevNote.GetGridX() - 5;
-        //    } else if (prevNote.GetGridX() - x < -5)
-        //    {
-        //        x = prevNote.GetGridX() + 5;
-        //    }
-
-        //    if (prevNote.GetGridY() - y > 5)
-        //    {
-        //        y = prevNote.GetGridY() - 5;
-        //    }
-        //    else if (prevNote.GetGridY() - y < -5)
-        //    {
-        //        y = prevNote.GetGridY() + 5;
-        //    }
-        //}
 
         return grid[x, y];
     }

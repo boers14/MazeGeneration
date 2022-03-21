@@ -9,23 +9,21 @@ public class Pathfinding : MonoBehaviour
     [System.NonSerialized]
     public List<Vector3> pathToPosition = new List<Vector3>();
 
-    [System.NonSerialized]
-    public bool found = false;
+    public List<PathfindingNode> finalPath = new List<PathfindingNode>();
 
-    [SerializeField]
-    private Material otherMat = null, targetMat = null;
-
-    private PathfindingNode startNode = null, targetNode = null;
-
-    public virtual void Start()
+    public virtual void Awake()
     {
         grid = PathfindingGrid.instance;
     }
 
-    public void FindPath(Vector3 a_startPos, Vector3 a_targetPos)
+    public void FindPath(Vector3 startPos, Vector3 targetPos, PathfindingNode startNode)
     {
-        startNode = grid.NodeFromWorldPos(a_startPos);
-        targetNode = grid.NodeFromWorldPos(a_targetPos, startNode);
+        if (startNode == null)
+        {
+            startNode = grid.NodeFromWorldPos(startPos);
+        }
+
+        PathfindingNode targetNode = grid.NodeFromWorldPos(targetPos);
 
         List<PathfindingNode> openList = new List<PathfindingNode>();
         HashSet<PathfindingNode> closedList = new HashSet<PathfindingNode>();
@@ -74,7 +72,7 @@ public class Pathfinding : MonoBehaviour
 
     public virtual void GetFinalPath(PathfindingNode startNode, PathfindingNode endNode)
     {
-        List<PathfindingNode> finalPath = new List<PathfindingNode>();
+        finalPath.Clear();
         PathfindingNode currentNode = endNode;
 
         while (currentNode != startNode)
@@ -87,8 +85,6 @@ public class Pathfinding : MonoBehaviour
         {
             pathToPosition.Add(finalPath[i].pos);
         }
-
-        found = true;
     }
 
     private int GetManhattenDist(PathfindingNode currentNode, PathfindingNode neighborNode)

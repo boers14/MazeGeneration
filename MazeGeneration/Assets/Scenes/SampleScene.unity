@@ -1417,6 +1417,57 @@ MonoBehaviour:
   objectForPool: {fileID: 5532930590037456518, guid: 503786d5316f57e43b747b1211380194, type: 3}
   planePrefab: {fileID: 2408308427508762923, guid: df614a9909d775841b11d61e0982a324, type: 3}
   mazeWallSize: 2.5
+--- !u!1 &828478031
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 828478033}
+  - component: {fileID: 828478032}
+  m_Layer: 0
+  m_Name: EnemyManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &828478032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 828478031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07d8f426b2e641a4b9e050c87caf6fd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectForPool: {fileID: 6397005779521974423, guid: 2cd53a4f61c67c54793873b16110f03e, type: 3}
+  enemysCreatedPerWave: 1
+  enemysAddedPerWave: 2
+  waveTimer: 60
+  baseEnemyAttackPower: 10
+  enemyAttackIncreasePerWave: 2
+  baseEnemyHealth: 50
+  enemyHealthIncreasePerWave: 10
+--- !u!4 &828478033
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 828478031}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 22.316963, y: -1.6268077, z: 76.699585}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &844423734
 GameObject:
   m_ObjectHideFlags: 0
@@ -1611,8 +1662,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   amountOfNodesComparedToMazeSize: 3
-  enemy: {fileID: 4805302624149744327, guid: 2cd53a4f61c67c54793873b16110f03e, type: 3}
-  spherePrefab: {fileID: 6815427198461168206, guid: b139ccf0488902f47a68bd08489cf583, type: 3}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0

@@ -51,6 +51,7 @@ public class PlayerShooting : MonoBehaviour
                 if (hit.transform.tag == "Enemy")
                 {
                     explosionType = GunExplosions.ExplosionType.Blood;
+                    hit.transform.GetComponentInParent<Enemy>().TakeDamage(damage);
                 } else if (hit.transform.tag == "Floor")
                 {
                     explosionType = GunExplosions.ExplosionType.Floor;
