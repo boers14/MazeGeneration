@@ -58,7 +58,7 @@ public class PlayerCamera : MonoBehaviour
         enabled = true;
         postProcessing.enabled = true;
 
-        RenderSettings.fog = true;
+        //RenderSettings.fog = true;
     }
 
     public IEnumerator StartCamShake(float duration, float magnitude, float delay)

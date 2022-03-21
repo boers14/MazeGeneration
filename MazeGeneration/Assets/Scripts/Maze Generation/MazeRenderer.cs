@@ -160,6 +160,7 @@ public class MazeRenderer : ObjectPool
             List<Transform> objectsOnSamePos = activeObjects.FindAll(wall => wall.position == activeObjects[i].position);
             if (objectsOnSamePos.Count > 1)
             {
+                activeObjects[i].gameObject.SetActive(false);
                 objectPool.Add(activeObjects[i]);
                 activeObjects.Remove(activeObjects[i]);
             }
