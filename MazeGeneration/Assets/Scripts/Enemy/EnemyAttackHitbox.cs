@@ -15,8 +15,8 @@ public class EnemyAttackHitbox : MonoBehaviour
     {
         if (collision.transform.tag == "Player" && enemy.canDealDamage)
         {
-            print("dealt damage");
-            collision.transform.GetComponent<PlayerMovement>().health -= enemy.attackPower;
+            collision.transform.GetComponent<PlayerHealth>().ChangeHealth(-enemy.attackPower);
+            enemy.canDealDamage = false;
         }
     }
 }

@@ -37,6 +37,8 @@ public class StartGameButton : SwitchActiveStateButton
         MazeRenderer.instance.StartGenerateMaze(widthGameMaze, heightGameMaze);
         MazeRenderer.instance.RemoveDoubleWalls();
         PathfindingGrid.instance.StartCreateGrid(widthGameMaze, heightGameMaze);
+        ScoreManager.instance.EnableValueText(true);
+        EnemyCounter.instance.EnableValueText(true);
         if (!currentPlayer)
         {
             currentPostProcessing = Instantiate(postProcessingPrefab);

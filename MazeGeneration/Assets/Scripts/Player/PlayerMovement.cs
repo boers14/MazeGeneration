@@ -14,9 +14,6 @@ public class PlayerMovement : MonoBehaviour
 
     private float maxMoveSpeed = 0, moveSpeedVertical = 0, moveSpeedHorizontal = 0;
 
-    [System.NonSerialized]
-    public float health = 100;
-
     void Start()
     {
         rb = GetComponent<Rigidbody>();

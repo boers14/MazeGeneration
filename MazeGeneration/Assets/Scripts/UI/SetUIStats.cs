@@ -74,7 +74,7 @@ public class SetUIStats : DisableAutoSize
             SetComparitiveSize(uiObject.GetChild(i), size, originalSize);
             for (int j = 0; j < uiObject.GetChild(i).childCount; j++)
             {
-                LoopTroughtChilds(uiObject.GetChild(i).GetChild(j), size, originalSize);
+                LoopTroughtChilds(uiObject.GetChild(i), size, originalSize);
             }
         }
     }
@@ -87,8 +87,15 @@ public class SetUIStats : DisableAutoSize
         RectTransform uiTransform = uiObject.GetComponent<RectTransform>();
 
         Vector2 newSize = Vector2.zero;
-        newSize.x = uiTransform.sizeDelta.x * decimalGrowth.x;
         newSize.y = uiTransform.sizeDelta.y * decimalGrowth.y;
+        if (uiTransform.sizeDelta.y == uiTransform.sizeDelta.x)
+        {
+            newSize.x = uiTransform.sizeDelta.x * decimalGrowth.y;
+        }
+        else
+        {
+            newSize.x = uiTransform.sizeDelta.x * decimalGrowth.x;
+        }
         uiTransform.sizeDelta = newSize;
 
         Vector3 newPos = Vector3.zero;

@@ -1625,10 +1625,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 015dbb4a87f869f4c88fc0de30de89d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkSpeed: 1
-  runSpeed: 0.015
+  walkSpeed: 0.7
+  runSpeed: 0.0175
   relocatePlayerTimer: 10
+  runRange: 4
+  attackRange: 1
   wallPrefab: {fileID: 5532930590037456518, guid: 503786d5316f57e43b747b1211380194, type: 3}
+  wallMask:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &6398995479591554945
 GameObject:
   m_ObjectHideFlags: 0

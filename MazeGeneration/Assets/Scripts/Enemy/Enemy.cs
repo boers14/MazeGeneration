@@ -12,6 +12,9 @@ public class Enemy : Pathfinding
     [SerializeField]
     private Transform wallPrefab = null;
 
+    [SerializeField]
+    private LayerMask wallMask = 0;
+
     private new Animation animation = null;
 
     private Vector3 nextPosition = Vector3.zero;
@@ -23,14 +26,12 @@ public class Enemy : Pathfinding
     private PathfindingNode lastUsedNode = null;
 
     [System.NonSerialized]
-    public float health = 0, attackPower = 0;
+    public float health = 0, attackPower = 0, addedScore = 0;
 
     [System.NonSerialized]
     public bool isDead = true, canDealDamage = false;
 
-    private bool isTweening = false, isInAttackAnim = false;
-
-    private string attackAnim = "";
+    private bool isTweening = false, isInAttackAnim = false, returnToWalkFromAttack = false;
 
     public override void Awake()
     {
@@ -42,15 +43,26 @@ public class Enemy : Pathfinding
 
     private void FixedUpdate()
     {
-        if (isDead || canDealDamage) { return; }
+        if (isDead || isInAttackAnim) { return; }
 
-        if (Vector3.Distance(transform.position, player.position) <= runRange)
+        float playerDist = Vector3.Distance(transform.position, player.position);
+        if (playerDist <= runRange)
         {
-            if (isTweening || isInAttackAnim)
+            if (Physics.Raycast(transform.position + new Vector3(0, -yPos / 2, 0), (player.position - transform.position).normalized, 
+                out RaycastHit hit, playerDist, wallMask))
             {
+                if (!isTweening)
+                {
+                    RelocatePlayer();
+                }
+                return;
+            }
+
+            if (isTweening || returnToWalkFromAttack)
+            {
+                returnToWalkFromAttack = false;
                 StopAllCoroutines();
                 lastUsedNode = null;
-                isInAttackAnim = false;
                 isTweening = false;
                 iTween.Stop(gameObject);
                 animation.Play("Run");
@@ -59,7 +71,7 @@ public class Enemy : Pathfinding
             nextPosition = new Vector3(player.position.x, yPos, player.position.z);
             transform.position = Vector3.Lerp(transform.position, nextPosition, runSpeed);
 
-            if (Vector3.Distance(transform.position, player.position) < attackRange && !canDealDamage)
+            if (playerDist < attackRange && !canDealDamage)
             {
                 StartCoroutine(DealDamage());
             }
@@ -105,7 +117,7 @@ public class Enemy : Pathfinding
 
     public void RelocatePlayer()
     {
-        isInAttackAnim = false;
+        returnToWalkFromAttack = false;
         animation.Play("Walk");
         currentNodeCount = 0;
         pathToPosition.Clear();
@@ -115,7 +127,7 @@ public class Enemy : Pathfinding
     public void TakeDamage(float damage)
     {
         health -= damage;
-        if (health <= 0)
+        if (health <= 0 && !isDead)
         {
             StartCoroutine(Die());
         }
@@ -125,22 +137,26 @@ public class Enemy : Pathfinding
     {
         isDead = true;
         animation.Play("Death");
+        ScoreManager.instance.UpdateValue((int)addedScore);
         yield return new WaitForSeconds(animation.GetClip("Death").length);
 
         EnemyManager.instance.activeObjects.Remove(transform);
         EnemyManager.instance.objectPool.Add(transform);
+        EnemyCounter.instance.UpdateValue(-1);
         gameObject.SetActive(false);
     }
 
     private IEnumerator DealDamage()
     {
+        returnToWalkFromAttack = true;
         isInAttackAnim = true;
         int attackAnimation = Random.Range(1, 3);
-        attackAnim = "Attack" + attackAnimation;
+        string attackAnim = "Attack" + attackAnimation;
         animation.Play(attackAnim);
 
         canDealDamage = true;
         yield return new WaitForSeconds(animation.GetClip(attackAnim).length);
         canDealDamage = false;
+        isInAttackAnim = false;
     }
 }

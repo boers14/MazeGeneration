@@ -8,7 +8,8 @@ public class EnemyManager : ObjectPool
 
     [SerializeField]
     private float enemysCreatedPerWave = 10, enemysAddedPerWave = 2, waveTimer = 60, baseEnemyAttackPower = 10,
-        enemyAttackIncreasePerWave = 2, baseEnemyHealth = 50, enemyHealthIncreasePerWave = 10;
+        enemyAttackIncreasePerWave = 2, baseEnemyHealth = 50, enemyHealthIncreasePerWave = 10, minRangeFromPlayer = 5, 
+        maxRangeFromPlayer = 25, baseAddedScore = 100, scoreAddedPerWave = 50;
 
     private float currentWave = 0;
 
@@ -38,6 +39,7 @@ public class EnemyManager : ObjectPool
         float amountOfEnemys = enemysCreatedPerWave + (enemysAddedPerWave * currentWave);
         float attackPowerEnemys = baseEnemyAttackPower + (enemyAttackIncreasePerWave * currentWave);
         float healthEnemys = baseEnemyHealth + (enemyHealthIncreasePerWave * currentWave);
+        float scoreEnemys = baseAddedScore + (scoreAddedPerWave * currentWave);
 
         for (int i = 0; i < amountOfEnemys; i++)
         {
@@ -49,11 +51,14 @@ public class EnemyManager : ObjectPool
             newEnemy.attackPower = attackPowerEnemys;
             newEnemy.transform.position = CreatePositionForEnemy();
             newEnemy.isDead = false;
+            newEnemy.addedScore = scoreEnemys;
             newEnemy.RelocatePlayer();
 
             activeObjects.Add(newEnemy.transform);
             objectPool.Remove(newEnemy.transform);
         }
+
+        EnemyCounter.instance.UpdateValue((int)amountOfEnemys);
 
         currentWave++;
         yield return new WaitForSeconds(waveTimer);
@@ -64,12 +69,19 @@ public class EnemyManager : ObjectPool
     private Vector3 CreatePositionForEnemy()
     {
         PathfindingGrid grid = PathfindingGrid.instance;
-        Vector3 enemyPos = new Vector3(Random.Range(grid.startX, grid.endX), -1, Random.Range(grid.startZ, grid.endZ));
-        while (Vector3.Distance(enemyPos, player.position) < 5)
+        Vector3 enemyPos = ReturnRandomPos();
+        while (Vector3.Distance(enemyPos, player.position) < minRangeFromPlayer || enemyPos.x < grid.startX || enemyPos.x > grid.endX
+            || enemyPos.z < grid.startZ || enemyPos.z > grid.endZ)
         {
-            enemyPos = new Vector3(Random.Range(grid.startX, grid.endX), -1, Random.Range(grid.startZ, grid.endZ));
+            enemyPos = ReturnRandomPos();
         }
 
         return enemyPos;
+    }
+
+    private Vector3 ReturnRandomPos()
+    {
+        return new Vector3(Random.Range(player.position.x - maxRangeFromPlayer, player.position.x + maxRangeFromPlayer),
+            -1, Random.Range(player.position.z - maxRangeFromPlayer, player.position.z + maxRangeFromPlayer));
     }
 }
