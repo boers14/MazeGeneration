@@ -5,11 +5,11 @@ using UnityEngine;
 public class PlayerShooting : MonoBehaviour
 {
     [SerializeField]
-    private float shootInterval = 0.1f, damage = 10, range = 4;
+    private float shootInterval = 0.1f, damage = 10, range = 4, amountOfBullets = 50, reloadTime = 1f;
 
-    private float shootCooldown = 0;
+    private float shootCooldown = 0, currentAmountOfBullets = 0;
 
-    private bool isShooting = false;
+    private bool isShooting = false, reloading = false;
 
     [SerializeField]
     private ParticleSystem gunSmoke = null;
@@ -26,6 +26,7 @@ public class PlayerShooting : MonoBehaviour
 
     private void Start()
     {
+        currentAmountOfBullets = amountOfBullets;
         gunBullets = GetComponent<ParticleSystem>();
 
         for (int i = 0; i < typeOfExplosions.Count; i++)
@@ -37,6 +38,8 @@ public class PlayerShooting : MonoBehaviour
 
     private void Update()
     {
+        if (reloading) { return; }
+
         if (Input.GetMouseButton(0) && shootCooldown <= 0)
         {
             if (!isShooting)
@@ -61,16 +64,24 @@ public class PlayerShooting : MonoBehaviour
                 }
 
                 StartCoroutine(CreateParticleSystemOnHitPosition(hit.distance / 15, hit.point, explosionType));
+
+                currentAmountOfBullets--;
+                if (currentAmountOfBullets <= 0)
+                {
+                    StartCoroutine(StartReloading());
+                }
             }
         } else if (!Input.GetMouseButton(0))
         {
             if (isShooting)
             {
-                camera.camShake = false;
-                isShooting = false;
-                gunBullets.Stop();
-                gunSmoke.Stop();
+                StopShooting();
             }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            StartCoroutine(StartReloading());
         }
 
         shootCooldown -= Time.deltaTime;
@@ -121,5 +132,22 @@ public class PlayerShooting : MonoBehaviour
         GunExplosions.ExplosionType explosionType)
     {
         return particleSystems.Find(explosion => explosion.GetComponent<GunExplosions>().explosionType == explosionType);
+    }
+
+    private IEnumerator StartReloading()
+    {
+        StopShooting();
+        reloading = true;
+        yield return new WaitForSeconds(reloadTime);
+        currentAmountOfBullets = amountOfBullets;
+        reloading = false;
+    }
+
+    private void StopShooting()
+    {
+        camera.camShake = false;
+        isShooting = false;
+        gunBullets.Stop();
+        gunSmoke.Stop();
     }
 }

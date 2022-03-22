@@ -45,17 +45,14 @@ public class EnemyManager : ObjectPool
         {
             if (objectPool.Count == 0) { AddObjectsToPool(5); }
 
-            Enemy newEnemy = objectPool[0].GetComponent<Enemy>();
-            newEnemy.gameObject.SetActive(true);
+            Enemy newEnemy = RetrieveObjectFromPool().GetComponent<Enemy>();
+
             newEnemy.health = healthEnemys;
             newEnemy.attackPower = attackPowerEnemys;
             newEnemy.transform.position = CreatePositionForEnemy();
             newEnemy.isDead = false;
             newEnemy.addedScore = scoreEnemys;
             newEnemy.RelocatePlayer();
-
-            activeObjects.Add(newEnemy.transform);
-            objectPool.Remove(newEnemy.transform);
         }
 
         EnemyCounter.instance.UpdateValue((int)amountOfEnemys);

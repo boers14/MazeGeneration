@@ -129,19 +129,10 @@ public class MazeRenderer : ObjectPool
 
     private void CreateWall(float x, float y, Vector3 offset, float yRot)
     {
-        if (objectPool.Count == 0)
-        {
-            AddObjectsToPool(5);
-        }
-
-        Transform wall = objectPool[0];
-        objectPool.RemoveAt(0);
-
-        wall.gameObject.SetActive(true);
+        Transform wall = RetrieveObjectFromPool();
         wall.position = new Vector3(-width / 2 + x * mazeWallSize, 0, -height / 2 + y * mazeWallSize) + offset;
         wall.eulerAngles = new Vector3(0, yRot, 0);
         wall.localScale = new Vector3(mazeWallSize, wall.localScale.y, wall.localScale.z);
-        activeObjects.Add(wall);
     }
 
     private void CreatePlane (Vector3 pos, Vector3 rot)

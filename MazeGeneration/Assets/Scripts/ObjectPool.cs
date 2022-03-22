@@ -18,9 +18,9 @@ public class ObjectPool : MonoBehaviour
     {
         for (int i = 0; i < count; i++)
         {
-            Transform newWall = Instantiate(objectForPool, transform);
-            newWall.gameObject.SetActive(false);
-            objectPool.Add(newWall);
+            Transform newObject = Instantiate(objectForPool, transform);
+            newObject.gameObject.SetActive(false);
+            objectPool.Add(newObject);
         }
     }
 
@@ -32,5 +32,28 @@ public class ObjectPool : MonoBehaviour
             objectPool.Add(activeObjects[i]);
         }
         activeObjects.Clear();
+    }
+
+    public void ReturnObjectToPool(Transform returnedObject)
+    {
+        activeObjects.Remove(returnedObject);
+        objectPool.Add(returnedObject);
+        returnedObject.gameObject.SetActive(false);
+    }
+
+    public Transform RetrieveObjectFromPool()
+    {
+        if (objectPool.Count == 0)
+        {
+            AddObjectsToPool(5);
+        }
+
+        Transform newObject = objectPool[0];
+        objectPool.Remove(newObject);
+
+        newObject.gameObject.SetActive(true);
+        activeObjects.Add(newObject);
+
+        return newObject;
     }
 }

@@ -47,6 +47,5 @@ public class CountingText : MonoBehaviour
     public virtual void EnableValueText(bool enabled)
     {
         text.enabled = enabled;
-        text.enableAutoSizing = true;
     }
 }
