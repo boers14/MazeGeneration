@@ -5,10 +5,9 @@ using UnityEngine.UI;
 
 public class PlayerHealth : MonoBehaviour
 {
-    [SerializeField]
-    private float maxHealth = 100;
+    public float maxHealth = 100;
 
-    private GameObject completeHealthBarObject = null;
+    private GameObject completeInGameUI = null;
 
     private Image greenHealth = null, animatedHealth = null;
 
@@ -25,10 +24,10 @@ public class PlayerHealth : MonoBehaviour
     {
         greenHealth = PlayerUIHandler.instance.greenHealth;
         animatedHealth = PlayerUIHandler.instance.animatedHealth;
-        completeHealthBarObject = PlayerUIHandler.instance.completeHealthBarObject;
+        completeInGameUI = PlayerUIHandler.instance.completeInGameUI;
 
         currentHealth = maxHealth;
-        completeHealthBarObject.SetActive(true);
+        completeInGameUI.SetActive(true);
         StartCoroutine(SetHealthBarPosStats());
     }
 

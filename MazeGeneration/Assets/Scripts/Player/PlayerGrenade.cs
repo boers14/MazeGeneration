@@ -49,4 +49,9 @@ public class PlayerGrenade : MonoBehaviour
             other.transform.GetComponentInParent<Enemy>().TakeDamage(damageDone);
         }
     }
+
+    public void IncreasePower(float extraDamage)
+    {
+        damageDone += extraDamage;
+    }
 }

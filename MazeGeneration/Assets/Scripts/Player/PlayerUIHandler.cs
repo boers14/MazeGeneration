@@ -5,9 +5,9 @@ using UnityEngine.UI;
 
 public class PlayerUIHandler : MonoBehaviour
 {
-    public Image greenHealth = null, animatedHealth = null;
+    public Image greenHealth = null, animatedHealth = null, staminaFill = null;
 
-    public GameObject completeHealthBarObject = null;
+    public GameObject completeInGameUI = null, completeStaminaUI = null;
 
     public static PlayerUIHandler instance = null;
 

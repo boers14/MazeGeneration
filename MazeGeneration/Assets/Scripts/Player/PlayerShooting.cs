@@ -27,6 +27,7 @@ public class PlayerShooting : MonoBehaviour
     private void Start()
     {
         currentAmountOfBullets = amountOfBullets;
+        BulletCounter.instance.UpdateValue((int)amountOfBullets);
         gunBullets = GetComponent<ParticleSystem>();
 
         for (int i = 0; i < typeOfExplosions.Count; i++)
@@ -39,7 +40,6 @@ public class PlayerShooting : MonoBehaviour
     private void Update()
     {
         if (reloading) { return; }
-
         if (Input.GetMouseButton(0) && shootCooldown <= 0)
         {
             if (!isShooting)
@@ -66,6 +66,7 @@ public class PlayerShooting : MonoBehaviour
                 StartCoroutine(CreateParticleSystemOnHitPosition(hit.distance / 15, hit.point, explosionType));
 
                 currentAmountOfBullets--;
+                BulletCounter.instance.UpdateValue(-1);
                 if (currentAmountOfBullets <= 0)
                 {
                     StartCoroutine(StartReloading());
@@ -139,6 +140,7 @@ public class PlayerShooting : MonoBehaviour
         StopShooting();
         reloading = true;
         yield return new WaitForSeconds(reloadTime);
+        BulletCounter.instance.UpdateValue((int)(amountOfBullets - currentAmountOfBullets));
         currentAmountOfBullets = amountOfBullets;
         reloading = false;
     }
@@ -149,5 +151,16 @@ public class PlayerShooting : MonoBehaviour
         isShooting = false;
         gunBullets.Stop();
         gunSmoke.Stop();
+    }
+
+    public void AddBullets(float bulletIncrease)
+    {
+        amountOfBullets += bulletIncrease;
+        StartCoroutine(StartReloading());
+    }
+
+    public void IncreasePower(float damageIncrease)
+    {
+        damage += damageIncrease;
     }
 }

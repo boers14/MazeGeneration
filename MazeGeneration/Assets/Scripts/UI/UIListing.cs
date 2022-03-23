@@ -10,6 +10,9 @@ public class UIListing : MonoBehaviour
     [SerializeField, Range(0, 1)]
     private float distanceBetweenUIObjects = 0.025f;
 
+    [SerializeField]
+    private bool moveDown = true;
+
     private void Start()
     {
         float movementDistance = FindObjectOfType<Canvas>().GetComponent<RectTransform>().sizeDelta.y * distanceBetweenUIObjects;
@@ -17,7 +20,13 @@ public class UIListing : MonoBehaviour
         for (int i = 0; i < uiList.Count; i++)
         {
             uiList[i].SetUIPosition(true, totalYDistance);
-            totalYDistance += uiList[i].size.y / 2 + movementDistance;
+            if (moveDown)
+            {
+                totalYDistance += uiList[i].size.y / 2 + movementDistance;
+            } else
+            {
+                totalYDistance -= uiList[i].size.y / 2 + movementDistance;
+            }
         }
     }
 }

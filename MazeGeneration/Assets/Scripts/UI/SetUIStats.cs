@@ -42,8 +42,8 @@ public class SetUIStats : DisableAutoSize
         Vector2 originalSize = rectTransform.sizeDelta;
 
         size = Vector2.zero;
-        size.x = canvasRectTransform.sizeDelta.x * xSize;
         size.y = canvasRectTransform.sizeDelta.y * ySize;
+        size.x = ReturnXSize(originalSize, size.y, canvasRectTransform.sizeDelta.x, xSize);
         rectTransform.sizeDelta = size;
 
         if (iterateThroughtChilds)
@@ -88,19 +88,24 @@ public class SetUIStats : DisableAutoSize
 
         Vector2 newSize = Vector2.zero;
         newSize.y = uiTransform.sizeDelta.y * decimalGrowth.y;
-        if (uiTransform.sizeDelta.y == uiTransform.sizeDelta.x)
-        {
-            newSize.x = uiTransform.sizeDelta.x * decimalGrowth.y;
-        }
-        else
-        {
-            newSize.x = uiTransform.sizeDelta.x * decimalGrowth.x;
-        }
+        newSize.x = ReturnXSize(uiTransform.sizeDelta, newSize.y, uiTransform.sizeDelta.x, decimalGrowth.x);
         uiTransform.sizeDelta = newSize;
 
         Vector3 newPos = Vector3.zero;
         newPos.x = uiTransform.localPosition.x * decimalGrowth.x;
         newPos.y = uiTransform.localPosition.y * decimalGrowth.y;
         uiTransform.localPosition = newPos;
+    }
+
+    private float ReturnXSize(Vector2 sizeDelta, float ySize, float xStart, float xGrowth)
+    {
+        if (sizeDelta.y == sizeDelta.x)
+        {
+            return ySize;
+        }
+        else
+        {
+            return xStart * xGrowth;
+        }
     }
 }

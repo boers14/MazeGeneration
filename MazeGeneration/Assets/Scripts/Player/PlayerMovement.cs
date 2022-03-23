@@ -1,28 +1,47 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField]
-    private float walkSpeed = 5, sprintSpeed = 7.5f, slowDownSpeed = 0.85f, speedUp = 0.25f, sprintTime = 5f, 
-        reloadSprintTimeComparedToSprintTime = 0.5f;
+    private float walkSpeed = 5, sprintSpeed = 7.5f, slowDownSpeed = 0.85f, speedUp = 0.25f, sprintTime = 5f,
+        reloadSprintTimeComparedToSprintTime = 0.5f, turnOffStaminaUITime = 1f;
+
+    private Image staminaFill = null;
+
+    private GameObject staminaUI = null;
 
     private Rigidbody rb = null;
 
     private Vector3 moveDirection = Vector3.zero;
 
-    private float maxMoveSpeed = 0, moveSpeedVertical = 0, moveSpeedHorizontal = 0, currentSprintTime = 0;
+    private float maxMoveSpeed = 0, moveSpeedVertical = 0, moveSpeedHorizontal = 0, currentSprintTime = 0, 
+        currentTurnOffStaminaUITime = 0, staminaFillEndPos = 0;
 
-    void Start()
+    private void Start()
     {
+        staminaFill = PlayerUIHandler.instance.staminaFill;
+        staminaUI = PlayerUIHandler.instance.completeStaminaUI;
+        currentTurnOffStaminaUITime = turnOffStaminaUITime;
+
         rb = GetComponent<Rigidbody>();
         maxMoveSpeed = walkSpeed;
         currentSprintTime = sprintTime;
+
+        StartCoroutine(SetStaminaFillStartPos());
     }
 
-    void Update()
+    private IEnumerator SetStaminaFillStartPos()
+    {
+        yield return new WaitForEndOfFrame();
+        staminaFillEndPos = staminaFill.rectTransform.localPosition.x - staminaFill.rectTransform.sizeDelta.x;
+        staminaUI.SetActive(false);
+    }
+
+    private void Update()
     {
         moveDirection = Vector3.zero;
 
@@ -30,6 +49,12 @@ public class PlayerMovement : MonoBehaviour
         {
             maxMoveSpeed = sprintSpeed;
             currentSprintTime -= Time.deltaTime;
+
+            if (currentTurnOffStaminaUITime >= turnOffStaminaUITime)
+            {
+                currentTurnOffStaminaUITime = 0;
+                staminaUI.SetActive(true);
+            }
         }
         else
         {
@@ -41,6 +66,27 @@ public class PlayerMovement : MonoBehaviour
         }
 
         currentSprintTime = Mathf.Clamp(currentSprintTime, 0, sprintTime);
+
+        if (staminaUI.activeSelf)
+        {
+            float sprintPercentage = currentSprintTime / sprintTime;
+            Vector3 staminaFillPos = staminaFill.rectTransform.localPosition;
+            staminaFillPos.x = staminaFillEndPos + (staminaFill.rectTransform.sizeDelta.x * sprintPercentage);
+            staminaFill.rectTransform.localPosition = staminaFillPos;
+
+            if (!Input.GetKey(KeyCode.LeftShift) && sprintPercentage >= 1)
+            {
+                currentTurnOffStaminaUITime += Time.deltaTime;
+                if (currentTurnOffStaminaUITime >= turnOffStaminaUITime)
+                {
+                    staminaUI.SetActive(false);
+                }
+            }
+            else
+            {
+                currentTurnOffStaminaUITime = 0;
+            }
+        }
 
         if (Input.GetKey(KeyCode.W))
         {

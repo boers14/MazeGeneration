@@ -23,6 +23,7 @@ public class PlayerGrenadePool : ObjectPool
         }
 
         currentAmountOfGrenades = startAmountOfGrenades;
+        GrenadeCounter.instance.UpdateValue((int)startAmountOfGrenades);
         base.Start();
     }
 
@@ -30,6 +31,7 @@ public class PlayerGrenadePool : ObjectPool
     {
         if (throwTimer <= 0 && currentAmountOfGrenades > 0 && Input.GetKeyDown(KeyCode.E))
         {
+            GrenadeCounter.instance.UpdateValue(-1);
             currentAmountOfGrenades--;
             throwTimer = throwInterval;
             PlayerGrenade newGrenade = RetrieveObjectFromPool().GetComponent<PlayerGrenade>();
@@ -40,5 +42,25 @@ public class PlayerGrenadePool : ObjectPool
         }
 
         throwTimer -= Time.deltaTime;
+    }
+
+    public void AddGrenades(float addedGrenades)
+    {
+        currentAmountOfGrenades += addedGrenades;
+        GrenadeCounter.instance.UpdateValue((int)addedGrenades);
+    }
+
+    public void IncreaseGrenadePower(float damageIncrease)
+    {
+        IncreaseListPower(objectPool, damageIncrease);
+        IncreaseListPower(activeObjects, damageIncrease);
+    }
+
+    private void IncreaseListPower(List<Transform> objects, float damageIncrease)
+    {
+        for (int i = 0; i < objects.Count; i++)
+        {
+            objects[i].GetComponent<PlayerGrenade>().IncreasePower(damageIncrease);
+        }
     }
 }

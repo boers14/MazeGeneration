@@ -7,9 +7,6 @@ public class ScoreManager : CountingText
 {
     public static ScoreManager instance = null;
 
-    [SerializeField]
-    private GameObject scoreUI = null;
-
     private void Start()
     {
         if(!instance)
@@ -20,11 +17,5 @@ public class ScoreManager : CountingText
             Destroy(gameObject);
             return;
         }
-    }
-
-    public override void EnableValueText(bool enabled)
-    {
-        base.EnableValueText(enabled);
-        scoreUI.SetActive(enabled);
     }
 }

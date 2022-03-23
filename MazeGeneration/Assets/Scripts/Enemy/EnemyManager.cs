@@ -31,6 +31,7 @@ public class EnemyManager : ObjectPool
     {
         player = FindObjectOfType<PlayerMovement>().transform;
         base.Start();
+        StartCoroutine(PickUpSpawner.instance.SpawnPickUps());
         StartCoroutine(CreateNewWaveOfEnemys());
     }
 
@@ -63,7 +64,7 @@ public class EnemyManager : ObjectPool
         StartCoroutine(CreateNewWaveOfEnemys());
     }
 
-    private Vector3 CreatePositionForEnemy()
+    public Vector3 CreatePositionForEnemy()
     {
         PathfindingGrid grid = PathfindingGrid.instance;
         Vector3 enemyPos = ReturnRandomPos();
