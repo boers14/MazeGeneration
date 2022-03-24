@@ -25,6 +25,8 @@ public class PlayerCamera : MonoBehaviour
 
     private void Update()
     {
+        if (!player) { return; }
+
         Vector2 md = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
 
         md = Vector2.Scale(md, new Vector2(sensitivity * smoothing, sensitivity * smoothing));
@@ -99,5 +101,10 @@ public class PlayerCamera : MonoBehaviour
         float z = Random.Range(-1f, 1f) * magnitude;
 
         transform.localPosition = new Vector3(pos.x + x, pos.y + y, pos.z + z);
+    }
+
+    private void OnDisable()
+    {
+        postProcessing.enabled = false;
     }
 }

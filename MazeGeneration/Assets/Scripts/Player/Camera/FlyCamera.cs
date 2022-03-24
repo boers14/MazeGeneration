@@ -44,6 +44,8 @@ public class FlyCamera : MonoBehaviour
 
     public void SetZoom(int width, int lenght)
     {
+        if(canvasSize == Vector2.zero) { Start(); }
+
         float widthZoom = ReturnZoom(canvasSize.x, width);
         float lenghtZoom = ReturnZoom(canvasSize.y, lenght);
 

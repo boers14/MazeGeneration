@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class PickUpSpawner : MonoBehaviour
 {
@@ -10,12 +11,18 @@ public class PickUpSpawner : MonoBehaviour
     public float amountOfHealthIncreased = 0;
 
     [SerializeField]
-    private float spawnPickupInterval = 30;
+    private float spawnPickupInterval = 30, tweenTime = 1.5f;
 
     [SerializeField]
     private List<PickupAbleObject> possiblePickupAbleObjects = new List<PickupAbleObject>();
 
     private List<PickupAbleObject> activeObjects = new List<PickupAbleObject>(), objectPool = new List<PickupAbleObject>();
+
+    [SerializeField]
+    private TMP_Text powerupExplanation = null;
+
+    [SerializeField]
+    private Color32 startColor = Color.white, endColor = Color.clear;
 
     public enum PickupAbleObjectType
     {
@@ -39,6 +46,8 @@ public class PickUpSpawner : MonoBehaviour
         {
             AddObjectsToPool(15, possiblePickupAbleObjects[i]);
         }
+
+        powerupExplanation.color = endColor;
     }
 
     private void AddObjectsToPool(int count, PickupAbleObject pickupAbleObject)
@@ -50,6 +59,18 @@ public class PickUpSpawner : MonoBehaviour
             newObject.gameObject.SetActive(false);
             objectPool.Add(newObject);
         }
+    }
+
+    public void ReturnAllObjectsToPool()
+    {
+        for (int i = 0; i < activeObjects.Count; i++)
+        {
+            activeObjects[i].gameObject.SetActive(false);
+            objectPool.Add(activeObjects[i]);
+        }
+        activeObjects.Clear();
+
+        powerupExplanation.color = endColor;
     }
 
     public void ReturnObjectToPool(PickupAbleObject pickupAbleObject)
@@ -89,5 +110,30 @@ public class PickUpSpawner : MonoBehaviour
     private PickupAbleObject FindObjectBasedOnType(List<PickupAbleObject> pickupAbleObjects, PickupAbleObjectType type)
     {
         return pickupAbleObjects.Find(obj => obj.type == type);
+    }
+
+    public void ShowPowerupEffect(string text)
+    {
+        iTween.Stop(powerupExplanation.gameObject);
+        powerupExplanation.color = Color.white;
+        powerupExplanation.text = text;
+        iTween.ValueTo(gameObject, iTween.Hash("from", 0, "to", 1, "time", tweenTime, "onupdate", "UpdateTextColor"));
+    }
+
+    private void UpdateTextColor(float val)
+    {
+        Color32 newColor = powerupExplanation.color;
+        newColor.r = (byte)(((1f - val) * startColor.r) + (val * endColor.r));
+        newColor.b = (byte)(((1f - val) * startColor.b) + (val * endColor.b));
+        newColor.g = (byte)(((1f - val) * startColor.g) + (val * endColor.g));
+        newColor.a = (byte)(((1f - val) * startColor.a) + (val * endColor.a));
+
+        powerupExplanation.color = newColor;
+    }
+
+    public void StopGeneratingPickups()
+    {
+        amountOfHealthIncreased = 0;
+        StopAllCoroutines();
     }
 }

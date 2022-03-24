@@ -39,12 +39,18 @@ public class PlayerHealth : MonoBehaviour
 
         healthBarEndPos = greenHealth.rectTransform.localPosition.x - greenHealth.rectTransform.sizeDelta.x;
         diffInHealthBarPos = greenHealth.rectTransform.sizeDelta.x;
+        ChangeHealth(100);
     }
 
     public void ChangeHealth(float healthChange)
     {
         currentHealth += healthChange;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+
+        if (currentHealth <= 0)
+        {
+            EndScreenManager.instance.EndRun();
+        }
 
         healthPercentage = currentHealth / maxHealth;
         float healthBarXPos = healthBarEndPos + (diffInHealthBarPos * healthPercentage);
@@ -61,7 +67,7 @@ public class PlayerHealth : MonoBehaviour
         } else
         {
             Vector3 newPos = GetNewPos(healthBarXPos, healthAddedColor);
-            iTween.MoveTo(animatedHealth.gameObject, iTween.Hash("position", newPos, "time", healthChange / 10, "easetype",
+            iTween.MoveTo(animatedHealth.gameObject, iTween.Hash("position", newPos, "time", healthChange / 50, "easetype",
                 iTween.EaseType.easeInSine, "oncomplete", "SetHealthBarPos", "oncompletetarget", gameObject));
         }
     }

@@ -11,6 +11,8 @@ public class PlayerGrenadePool : ObjectPool
 
     public static PlayerGrenadePool instance = null;
 
+    private Transform camTransform = null;
+
     public override void Start()
     {
         if (!instance)
@@ -24,6 +26,7 @@ public class PlayerGrenadePool : ObjectPool
 
         currentAmountOfGrenades = startAmountOfGrenades;
         GrenadeCounter.instance.UpdateValue((int)startAmountOfGrenades);
+        camTransform = Camera.main.transform;
         base.Start();
     }
 
@@ -37,7 +40,7 @@ public class PlayerGrenadePool : ObjectPool
             PlayerGrenade newGrenade = RetrieveObjectFromPool().GetComponent<PlayerGrenade>();
             newGrenade.transform.position = transform.position;
             newGrenade.GetComponent<Rigidbody>().velocity = Vector3.zero;
-            newGrenade.GetComponent<Rigidbody>().AddForce((transform.forward + transform.up * 0.75f) * throwStrenght);
+            newGrenade.GetComponent<Rigidbody>().AddForce((camTransform.forward + camTransform.up * 0.75f) * throwStrenght);
             StartCoroutine(newGrenade.StartCountDown());
         }
 

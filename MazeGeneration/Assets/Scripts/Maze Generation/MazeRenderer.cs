@@ -46,14 +46,6 @@ public class MazeRenderer : ObjectPool
         AddObjectsToPool(5000);
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            Application.Quit();
-        }
-    }
-
     public void StartGenerateMaze(int width, int height)
     {
         this.width = width;

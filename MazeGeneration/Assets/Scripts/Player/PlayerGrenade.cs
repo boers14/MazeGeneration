@@ -13,6 +13,8 @@ public class PlayerGrenade : MonoBehaviour
 
     private new MeshRenderer renderer = null;
 
+    private AudioSource explosionSound = null;
+
     private void Awake()
     {
         transform.SetParent(null);
@@ -23,6 +25,7 @@ public class PlayerGrenade : MonoBehaviour
         sphereCollider.enabled = false;
 
         particleSystem = GetComponent<ParticleSystem>();
+        explosionSound = GetComponent<AudioSource>();
     }
 
     public IEnumerator StartCountDown()
@@ -34,11 +37,21 @@ public class PlayerGrenade : MonoBehaviour
 
     private IEnumerator Explode()
     {
+        explosionSound.Play();
         renderer.enabled = false;
         particleSystem.Play();
         sphereCollider.enabled = true;
         yield return new WaitForSeconds(explosionDuration);
         sphereCollider.enabled = false;
+        if (explosionDuration < explosionSound.clip.length)
+        {
+            StartCoroutine(ReturnObjectToPool());
+        }
+    }
+
+    private IEnumerator ReturnObjectToPool()
+    {
+        yield return new WaitForSeconds(explosionSound.clip.length - explosionDuration);
         PlayerGrenadePool.instance.ReturnObjectToPool(transform);
     }
 

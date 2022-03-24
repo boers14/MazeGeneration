@@ -17,13 +17,24 @@ public class PickupAbleObject : MonoBehaviour
     [System.NonSerialized]
     public bool isOpened = false;
 
+    [SerializeField]
+    private string powerUpExplanation = "";
+
     public PickUpSpawner.PickupAbleObjectType type = PickUpSpawner.PickupAbleObjectType.HealthRegain;
+
+    private AudioSource pickUpSoundEffect = null;
+
+    private void Start()
+    {
+        Instantiate();
+    }
 
     public virtual void Instantiate()
     {
         colliders = GetComponentsInChildren<BoxCollider>();
         animator = GetComponent<Animator>();
         rigidbody = GetComponent<Rigidbody>();
+        pickUpSoundEffect = GetComponent<AudioSource>();
         rigidbody.freezeRotation = true;
     }
 
@@ -37,6 +48,7 @@ public class PickupAbleObject : MonoBehaviour
 
     private IEnumerator PlayAnimation()
     {
+        pickUpSoundEffect.Play();
         isOpened = true;
         SwitchCollidebleStatus(false);
         rigidbody.velocity = Vector3.zero;
@@ -50,6 +62,7 @@ public class PickupAbleObject : MonoBehaviour
         yield return new WaitForSeconds(1f);
         animator.speed = 0;
         GrantEffect();
+        PickUpSpawner.instance.ShowPowerupEffect(powerUpExplanation);
         StartCoroutine(ContinueAnimation());
     }
 
@@ -65,7 +78,6 @@ public class PickupAbleObject : MonoBehaviour
         yield return new WaitForSeconds(1f);
         animator.SetBool("isOpening", false);
         PickUpSpawner.instance.ReturnObjectToPool(this);
-        Destroy(gameObject);
         SwitchCollidebleStatus(true);
     }
 

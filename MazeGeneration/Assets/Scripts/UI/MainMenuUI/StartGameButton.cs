@@ -34,6 +34,8 @@ public class StartGameButton : SwitchActiveStateButton
 
     private void StartGame()
     {
+        EndScreenManager.instance.isInGame = true;
+        ScoreManager.instance.ResetValue();
         MazeRenderer.instance.StartGenerateMaze(widthGameMaze, heightGameMaze);
         MazeRenderer.instance.RemoveDoubleWalls();
         PathfindingGrid.instance.StartCreateGrid(widthGameMaze, heightGameMaze);
@@ -49,5 +51,17 @@ public class StartGameButton : SwitchActiveStateButton
                 currentPlayer.transform.localScale.y, MazeRenderer.instance.centerMazePos.z);
             camera.SetCameraPosToPlayer();
         }
+    }
+
+    public void DestroyCurrentRun()
+    {
+        camera.transform.SetParent(null);
+        RenderSettings.fog = false;
+        camera.enabled = false;
+        camera.GetComponent<FlyCamera>().SetZoom(widthGameMaze, heightGameMaze);
+
+        Destroy(currentPostProcessing.gameObject);
+        Destroy(currentEnvironmentParticles.gameObject);
+        Destroy(currentPlayer);
     }
 }

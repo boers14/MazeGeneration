@@ -9,11 +9,15 @@ public class EnemyManager : ObjectPool
     [SerializeField]
     private float enemysCreatedPerWave = 10, enemysAddedPerWave = 2, waveTimer = 60, baseEnemyAttackPower = 10,
         enemyAttackIncreasePerWave = 2, baseEnemyHealth = 50, enemyHealthIncreasePerWave = 10, minRangeFromPlayer = 5, 
-        maxRangeFromPlayer = 25, baseAddedScore = 100, scoreAddedPerWave = 50;
+        maxRangeFromPlayer = 25, baseAddedScore = 100, scoreAddedPerWave = 50, runSpeedAddedPerWave = 0.035f;
 
-    private float currentWave = 0;
+    private float currentWave = 0, baseRunSpeed = 0;
 
     private Transform player = null;
+
+    private bool firstRun = true;
+
+    private AudioSource newWaveSound = null;
 
     public override void Start()
     {
@@ -25,22 +29,32 @@ public class EnemyManager : ObjectPool
             Destroy(gameObject);
             return;
         }
+
+        baseRunSpeed = objectForPool.GetComponent<Enemy>().runSpeed;
     }
 
     public void FindPlayerObject()
     {
         player = FindObjectOfType<PlayerMovement>().transform;
-        base.Start();
+        newWaveSound = player.GetComponent<AudioSource>();
+        if (firstRun)
+        {
+            firstRun = false;
+            base.Start();
+        }
+
         StartCoroutine(PickUpSpawner.instance.SpawnPickUps());
         StartCoroutine(CreateNewWaveOfEnemys());
     }
 
     private IEnumerator CreateNewWaveOfEnemys()
     {
+        newWaveSound.Play();
         float amountOfEnemys = enemysCreatedPerWave + (enemysAddedPerWave * currentWave);
         float attackPowerEnemys = baseEnemyAttackPower + (enemyAttackIncreasePerWave * currentWave);
         float healthEnemys = baseEnemyHealth + (enemyHealthIncreasePerWave * currentWave);
         float scoreEnemys = baseAddedScore + (scoreAddedPerWave * currentWave);
+        float speedEnemys = baseRunSpeed + (runSpeedAddedPerWave * currentWave);
 
         for (int i = 0; i < amountOfEnemys; i++)
         {
@@ -53,6 +67,8 @@ public class EnemyManager : ObjectPool
             newEnemy.transform.position = CreatePositionForEnemy();
             newEnemy.isDead = false;
             newEnemy.addedScore = scoreEnemys;
+            newEnemy.runSpeed = speedEnemys;
+            newEnemy.player = player;
             newEnemy.RelocatePlayer();
         }
 
@@ -81,5 +97,11 @@ public class EnemyManager : ObjectPool
     {
         return new Vector3(Random.Range(player.position.x - maxRangeFromPlayer, player.position.x + maxRangeFromPlayer),
             -1, Random.Range(player.position.z - maxRangeFromPlayer, player.position.z + maxRangeFromPlayer));
+    }
+
+    public void StopGeneratingEnemys()
+    {
+        currentWave = 0;
+        StopAllCoroutines();
     }
 }

@@ -24,6 +24,24 @@ public class Pathfinding : MonoBehaviour
         }
 
         PathfindingNode targetNode = grid.NodeFromWorldPos(targetPos);
+        while (targetNode.IsWall())
+        {
+            bool foundNewNode = false;
+            List<PathfindingNode> neighborNodes = grid.GetNeighborNodes(targetNode);
+            foreach (PathfindingNode node in neighborNodes)
+            {
+                if (!node.IsWall())
+                {
+                    targetNode = node;
+                    foundNewNode = true;
+                }
+            }
+
+            if (!foundNewNode)
+            {
+                targetNode = neighborNodes[Random.Range(0, neighborNodes.Count)];
+            }
+        }
 
         List<PathfindingNode> openList = new List<PathfindingNode>();
         HashSet<PathfindingNode> closedList = new HashSet<PathfindingNode>();
@@ -52,7 +70,7 @@ public class Pathfinding : MonoBehaviour
 
             foreach (PathfindingNode node in grid.GetNeighborNodes(currentNode))
             {
-                if (node.IsWall() && node != targetNode || closedList.Contains(node) || openList.Contains(node))
+                if (node.IsWall() || closedList.Contains(node) || openList.Contains(node))
                 {
                     continue;
                 }

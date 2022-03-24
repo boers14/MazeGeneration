@@ -24,8 +24,15 @@ public class PlayerShooting : MonoBehaviour
 
     private new PlayerCamera camera = null;
 
+    [SerializeField]
+    private LayerMask layerToIgnore = 0;
+
+    [SerializeField]
+    private AudioSource gunShot = null, gunReload = null;
+
     private void Start()
     {
+        layerToIgnore = ~layerToIgnore;
         currentAmountOfBullets = amountOfBullets;
         BulletCounter.instance.UpdateValue((int)amountOfBullets);
         gunBullets = GetComponent<ParticleSystem>();
@@ -42,13 +49,15 @@ public class PlayerShooting : MonoBehaviour
         if (reloading) { return; }
         if (Input.GetMouseButton(0) && shootCooldown <= 0)
         {
+            gunShot.pitch = 1 + Random.Range(-0.2f, 0.2f);
+            gunShot.Play();
             if (!isShooting)
             {
                 StartCoroutine(StartGunShootingParticleSystems());
             }
 
             shootCooldown = shootInterval;
-            if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, range))
+            if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, range, layerToIgnore))
             {
                 GunExplosions.ExplosionType explosionType = GunExplosions.ExplosionType.Wall;
                 if (hit.transform.tag == "Enemy")
@@ -137,6 +146,7 @@ public class PlayerShooting : MonoBehaviour
 
     private IEnumerator StartReloading()
     {
+        gunReload.Play();
         StopShooting();
         reloading = true;
         yield return new WaitForSeconds(reloadTime);

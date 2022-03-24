@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class Enemy : Pathfinding
 {
-    private Transform player = null;
+    [System.NonSerialized]
+    public Transform player = null;
 
     [SerializeField]
-    private float walkSpeed = 1f, runSpeed = 3f, relocatePlayerTimer = 3f, runRange = 4f, attackRange = 1f;
+    private float walkSpeed = 1f, relocatePlayerTimer = 3f, runRange = 4f, attackRange = 1f;
+
+    public float runSpeed = 3f;
 
     [SerializeField]
     private Transform wallPrefab = null;
@@ -33,11 +36,13 @@ public class Enemy : Pathfinding
 
     private bool isTweening = false, isInAttackAnim = false, returnToWalkFromAttack = false;
 
+    private AudioSource gruntNoice = null;
+
     public override void Awake()
     {
         base.Awake();
+        gruntNoice = GetComponent<AudioSource>();
         animation = GetComponent<Animation>();
-        player = FindObjectOfType<PlayerMovement>().transform;
         yPos = -wallPrefab.localScale.y / 2 - 0.015f;
     }
 
@@ -48,8 +53,8 @@ public class Enemy : Pathfinding
         float playerDist = Vector3.Distance(transform.position, player.position);
         if (playerDist <= runRange)
         {
-            if (Physics.Raycast(transform.position + new Vector3(0, -yPos / 2, 0), (player.position - transform.position).normalized, 
-                out RaycastHit hit, playerDist, wallMask))
+            if (Physics.Raycast(transform.position - transform.forward * 0.1f + new Vector3(0, -yPos / 2, 0), 
+                (player.position - transform.position).normalized, out RaycastHit hit, playerDist, wallMask))
             {
                 if (!isTweening)
                 {
@@ -60,6 +65,11 @@ public class Enemy : Pathfinding
 
             if (isTweening || returnToWalkFromAttack)
             {
+                if (!gruntNoice.isPlaying)
+                {
+                    gruntNoice.Play();
+                }
+
                 returnToWalkFromAttack = false;
                 StopAllCoroutines();
                 lastUsedNode = null;
@@ -69,7 +79,7 @@ public class Enemy : Pathfinding
             }
 
             nextPosition = new Vector3(player.position.x, yPos, player.position.z);
-            transform.position = Vector3.Lerp(transform.position, nextPosition, runSpeed);
+            transform.position = Vector3.MoveTowards(transform.position, nextPosition, runSpeed);
 
             if (playerDist < attackRange && !canDealDamage)
             {
@@ -117,6 +127,7 @@ public class Enemy : Pathfinding
 
     public void RelocatePlayer()
     {
+        gruntNoice.Stop();
         returnToWalkFromAttack = false;
         animation.Play("Walk");
         currentNodeCount = 0;
@@ -136,6 +147,11 @@ public class Enemy : Pathfinding
     private IEnumerator Die()
     {
         isDead = true;
+        isTweening = false;
+        isInAttackAnim = false;
+        returnToWalkFromAttack = false;
+        canDealDamage = false;
+
         animation.Play("Death");
         ScoreManager.instance.UpdateValue((int)addedScore);
         yield return new WaitForSeconds(animation.GetClip("Death").length);
