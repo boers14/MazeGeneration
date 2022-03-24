@@ -5171,7 +5171,7 @@ MonoBehaviour:
   - {fileID: 172010023857937845, guid: 6863dcd61c26c5e47901d4eb9562eba3, type: 3}
   layerToIgnore:
     serializedVersion: 2
-    m_Bits: 4
+    m_Bits: 260
   gunShot: {fileID: 6214154907573250139}
   gunReload: {fileID: 3744615296255020525}
 --- !u!82 &6214154907573250139

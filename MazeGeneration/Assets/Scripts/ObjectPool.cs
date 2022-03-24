@@ -9,11 +9,14 @@ public class ObjectPool : MonoBehaviour
     [System.NonSerialized]
     public List<Transform> objectPool = new List<Transform>(), activeObjects = new List<Transform>();
 
+    // Base class for re-using a single object for object pool
+    // TODO: Make object pool that supports multiple objects
     public virtual void Start()
     {
         AddObjectsToPool(100);
     }
 
+    // Add a certain amount of objects to the pool
     public void AddObjectsToPool(int count)
     {
         for (int i = 0; i < count; i++)
@@ -24,6 +27,7 @@ public class ObjectPool : MonoBehaviour
         }
     }
 
+    // Return all active objects to the pool 
     public void ReturnAllObjectsToPool()
     {
         for (int i = activeObjects.Count - 1; i >= 0; i--)
@@ -34,6 +38,7 @@ public class ObjectPool : MonoBehaviour
         activeObjects.Clear();
     }
 
+    // Return a single object to the pool
     public void ReturnObjectToPool(Transform returnedObject)
     {
         activeObjects.Remove(returnedObject);
@@ -41,8 +46,10 @@ public class ObjectPool : MonoBehaviour
         returnedObject.gameObject.SetActive(false);
     }
 
+    // Retrieve an object from the pool
     public Transform RetrieveObjectFromPool()
     {
+        // Add objects to the pool if pool is empty
         if (objectPool.Count == 0)
         {
             AddObjectsToPool(5);

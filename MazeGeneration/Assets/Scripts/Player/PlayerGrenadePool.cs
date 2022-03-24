@@ -9,6 +9,7 @@ public class PlayerGrenadePool : ObjectPool
 
     private float throwTimer = 0, currentAmountOfGrenades = 0;
 
+    // Is singleton
     public static PlayerGrenadePool instance = null;
 
     private Transform camTransform = null;
@@ -24,12 +25,14 @@ public class PlayerGrenadePool : ObjectPool
             return;
         }
 
+        // Set grenades to start amount
         currentAmountOfGrenades = startAmountOfGrenades;
         GrenadeCounter.instance.UpdateValue((int)startAmountOfGrenades);
         camTransform = Camera.main.transform;
         base.Start();
     }
 
+    // If possible create a grenade for the player to throw
     private void Update()
     {
         if (throwTimer <= 0 && currentAmountOfGrenades > 0 && Input.GetKeyDown(KeyCode.E))
@@ -47,18 +50,21 @@ public class PlayerGrenadePool : ObjectPool
         throwTimer -= Time.deltaTime;
     }
 
+    // Add grenades and update counter
     public void AddGrenades(float addedGrenades)
     {
         currentAmountOfGrenades += addedGrenades;
         GrenadeCounter.instance.UpdateValue((int)addedGrenades);
     }
 
+    // Go over both lists to increase power
     public void IncreaseGrenadePower(float damageIncrease)
     {
         IncreaseListPower(objectPool, damageIncrease);
         IncreaseListPower(activeObjects, damageIncrease);
     }
 
+    // Increase damage done from grenades
     private void IncreaseListPower(List<Transform> objects, float damageIncrease)
     {
         for (int i = 0; i < objects.Count; i++)

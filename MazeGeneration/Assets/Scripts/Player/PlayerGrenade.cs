@@ -15,6 +15,7 @@ public class PlayerGrenade : MonoBehaviour
 
     private AudioSource explosionSound = null;
 
+    // Set vars
     private void Awake()
     {
         transform.SetParent(null);
@@ -28,6 +29,7 @@ public class PlayerGrenade : MonoBehaviour
         explosionSound = GetComponent<AudioSource>();
     }
 
+    // Show grenade and start explosion after given time
     public IEnumerator StartCountDown()
     {
         renderer.enabled = true;
@@ -35,6 +37,7 @@ public class PlayerGrenade : MonoBehaviour
         StartCoroutine(Explode());
     }
 
+    // Deal damage for the given amount of time
     private IEnumerator Explode()
     {
         explosionSound.Play();
@@ -49,12 +52,14 @@ public class PlayerGrenade : MonoBehaviour
         }
     }
 
+    // Return object to pool after sounds effect is done
     private IEnumerator ReturnObjectToPool()
     {
         yield return new WaitForSeconds(explosionSound.clip.length - explosionDuration);
         PlayerGrenadePool.instance.ReturnObjectToPool(transform);
     }
 
+    // For every collider on the enemy deal damage (damageDone * 16)
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Enemy")
@@ -63,6 +68,7 @@ public class PlayerGrenade : MonoBehaviour
         }
     }
 
+    // Increase grenade damage done
     public void IncreasePower(float extraDamage)
     {
         damageDone += extraDamage;

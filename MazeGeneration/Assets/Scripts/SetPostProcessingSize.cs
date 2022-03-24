@@ -11,6 +11,7 @@ public class SetPostProcessingSize : MonoBehaviour
         postProcessing = GetComponent<PostProcessVolume>();
     }
 
+    // Set size and position of the post processing effect
     public void SetPostProcessingBoxSize(int width, int height)
     {
         transform.position = MazeRenderer.instance.centerMazePos;
@@ -22,6 +23,7 @@ public class SetPostProcessingSize : MonoBehaviour
         GetComponent<BoxCollider>().size = boxSize;
     }
 
+    // Calculate size of post processing based on size of the maze
     private float GetBoxSizeDirection(float value)
     {
         return value * MazeRenderer.instance.mazeWallSize + 3f;

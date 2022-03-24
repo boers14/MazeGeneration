@@ -11,6 +11,7 @@ public class MazeRenderer : ObjectPool
 
     private List<Transform> groundAndRoof = new List<Transform>();
 
+    // Is singleton
     public static MazeRenderer instance = null;
 
     private Vector3 rightOffset = new Vector3(0.5f, 0, 0), leftOffset = new Vector3(-0.5f, 0, 0), 
@@ -21,6 +22,7 @@ public class MazeRenderer : ObjectPool
 
     private int width = 50, height = 30;
 
+    // Add objects to pool and calculate the offsets
     public override void Start()
     {
         if (!instance)
@@ -46,17 +48,20 @@ public class MazeRenderer : ObjectPool
         AddObjectsToPool(5000);
     }
 
+    // Set width/height. Generate maze
     public void StartGenerateMaze(int width, int height)
     {
         this.width = width;
         this.height = height;
-        GenerateMaze(MazeGenerator.GenerateMaze(width, height, MazeGenerator.MazeType.RecursiveBackTracking));
+        GenerateMaze(MazeGenerator.GenerateMaze(width, height));
     }
-
+    
+    // Remove all walls from maze, create new maze based on given maze
     private void GenerateMaze(WallState[,] walls)
     {
         ClearMaze();
 
+        // Create a wall based on the direction given in the node
         for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < height; j++)
@@ -81,6 +86,7 @@ public class MazeRenderer : ObjectPool
             }
         }
 
+        // Create outer walls
         for (int i = -1; i < width; i++)
         {
             CreateWall(i, -1, rightOffset, 0);
@@ -93,6 +99,7 @@ public class MazeRenderer : ObjectPool
             CreateWall(width, i + 1, downOffset, 90);
         }
 
+        // Set roof and ground pos/ scale
         centerMazePos = new Vector3(ReturnPosOfPlane(width), 0, ReturnPosOfPlane(height));
         Vector3 newScale = new Vector3(ReturnScaleOfPlane(width), 0, ReturnScaleOfPlane(height));
         for (int i = 0; i < groundAndRoof.Count; i++)
@@ -103,6 +110,7 @@ public class MazeRenderer : ObjectPool
         }
     }
 
+    // Return pos of plane based on maze size/ wall size. Add 0.5 for uneven maze size
     private float ReturnPosOfPlane(float value)
     {
         if (value % 2 == 0)
@@ -114,11 +122,13 @@ public class MazeRenderer : ObjectPool
         }
     }
 
+    // Return scale of plane based on wall size/ maze size
     private float ReturnScaleOfPlane(float value)
     {
         return (value * mazeWallSize / 10f) + (mazeWallSize / 10f);
     }
 
+    // Create a wall on given x/ y with extra offset calculated in, make wall x scale bigger based on wall size
     private void CreateWall(float x, float y, Vector3 offset, float yRot)
     {
         Transform wall = RetrieveObjectFromPool();
@@ -127,6 +137,7 @@ public class MazeRenderer : ObjectPool
         wall.localScale = new Vector3(mazeWallSize, wall.localScale.y, wall.localScale.z);
     }
 
+    // Create a new plane on given pos with given rot
     private void CreatePlane (Vector3 pos, Vector3 rot)
     {
         Transform newPlane = Instantiate(planePrefab);
@@ -136,6 +147,7 @@ public class MazeRenderer : ObjectPool
         groundAndRoof.Add(newPlane);
     }
 
+    // Remove walls that were doubly placed
     public void RemoveDoubleWalls()
     {
         for (int i = activeObjects.Count - 1; i >= 0 ; i--)
@@ -150,6 +162,7 @@ public class MazeRenderer : ObjectPool
         }
     }
 
+    // Clear maze by returning walls to pool and turning off the ground and roof
     public void ClearMaze()
     {
         ReturnAllObjectsToPool();

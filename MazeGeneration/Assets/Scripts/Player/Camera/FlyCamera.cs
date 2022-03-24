@@ -14,6 +14,7 @@ public class FlyCamera : MonoBehaviour
         canvasSize = FindObjectOfType<Canvas>().GetComponent<RectTransform>().sizeDelta;
     }
 
+    // Move cam based on input
     private void Update()
     {
         if (Input.GetKey(KeyCode.W))
@@ -42,6 +43,7 @@ public class FlyCamera : MonoBehaviour
         }
     }
 
+    // Set camera pos above maze so the entire maze in visible
     public void SetZoom(int width, int lenght)
     {
         if(canvasSize == Vector2.zero) { Start(); }
@@ -54,6 +56,7 @@ public class FlyCamera : MonoBehaviour
         transform.eulerAngles = new Vector3(90, 0, 0);
     }
 
+    // Calculate position from maze based on the maze wall size/ canvas size/ maze size
     private float ReturnZoom(float canvasSize, float direction)
     {
         return canvasSize * (direction / canvasSize) * MazeRenderer.instance.mazeWallSize;

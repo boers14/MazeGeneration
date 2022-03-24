@@ -30,8 +30,10 @@ public class PlayerShooting : MonoBehaviour
     [SerializeField]
     private AudioSource gunShot = null, gunReload = null;
 
+    // Is object pool of multiple particle effects
     private void Start()
     {
+        // Inverse layer
         layerToIgnore = ~layerToIgnore;
         currentAmountOfBullets = amountOfBullets;
         BulletCounter.instance.UpdateValue((int)amountOfBullets);
@@ -44,21 +46,30 @@ public class PlayerShooting : MonoBehaviour
         camera = Camera.main.GetComponent<PlayerCamera>();
     }
 
+    // Handles shooting when left mouse button is pressed
     private void Update()
     {
+        // Return if the player is reloading
         if (reloading) { return; }
+
+        // Can shoot only when cooldown is below 0
         if (Input.GetMouseButton(0) && shootCooldown <= 0)
         {
+            // Use random pitch for gun
             gunShot.pitch = 1 + Random.Range(-0.2f, 0.2f);
             gunShot.Play();
+
+            // Start playing particles if player was not shooting
             if (!isShooting)
             {
                 StartCoroutine(StartGunShootingParticleSystems());
             }
 
+            // Shoot raycast from gun that ignores IgnoreRaycast and pickup layer
             shootCooldown = shootInterval;
             if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, range, layerToIgnore))
             {
+                // Have different explosion type based on what is hit
                 GunExplosions.ExplosionType explosionType = GunExplosions.ExplosionType.Wall;
                 if (hit.transform.tag == "Enemy")
                 {
@@ -72,10 +83,13 @@ public class PlayerShooting : MonoBehaviour
                     explosionType = GunExplosions.ExplosionType.Wall;
                 }
 
+                // Create explosion on the hit position
                 StartCoroutine(CreateParticleSystemOnHitPosition(hit.distance / 15, hit.point, explosionType));
 
+                // Update bullet count
                 currentAmountOfBullets--;
                 BulletCounter.instance.UpdateValue(-1);
+                // Reload if there are no more bullets
                 if (currentAmountOfBullets <= 0)
                 {
                     StartCoroutine(StartReloading());
@@ -83,12 +97,14 @@ public class PlayerShooting : MonoBehaviour
             }
         } else if (!Input.GetMouseButton(0))
         {
+            // Stop particles if the player was shooting
             if (isShooting)
             {
                 StopShooting();
             }
         }
 
+        // Reload
         if (Input.GetKeyDown(KeyCode.Q))
         {
             StartCoroutine(StartReloading());
@@ -97,6 +113,7 @@ public class PlayerShooting : MonoBehaviour
         shootCooldown -= Time.deltaTime;
     }
 
+    // Add explosion effect to pool
     private void AddExplosionEffectToList(ParticleSystem particleSystemPrefab, int count)
     {
         for (int i = 0; i < count; i++)
@@ -108,6 +125,7 @@ public class PlayerShooting : MonoBehaviour
         }
     }
 
+    // Start gun particles effects
     private IEnumerator StartGunShootingParticleSystems()
     {
         camera.camShake = true;
@@ -117,11 +135,13 @@ public class PlayerShooting : MonoBehaviour
         gunSmoke.Play();
     }
 
+    // Create given type of explosion effect on given position based on the distance from the player
     private IEnumerator CreateParticleSystemOnHitPosition(float distanceTime, Vector3 explosionPos, 
         GunExplosions.ExplosionType explosionType)
     {
         ParticleSystem newExplosion = ReturnParticleSystemBasedOnExplosionType(explosions, explosionType);
 
+        // If no explosion was found in pool add explosions of given type to pool
         if (!newExplosion)
         {
             AddExplosionEffectToList(ReturnParticleSystemBasedOnExplosionType(typeOfExplosions, explosionType), 5);
@@ -138,12 +158,14 @@ public class PlayerShooting : MonoBehaviour
         StartCoroutine(newExplosion.GetComponent<GunExplosions>().ReturnExplosionToList());
     }
 
+    // Return explosion from given list based on type
     private ParticleSystem ReturnParticleSystemBasedOnExplosionType(List<ParticleSystem> particleSystems,
         GunExplosions.ExplosionType explosionType)
     {
         return particleSystems.Find(explosion => explosion.GetComponent<GunExplosions>().explosionType == explosionType);
     }
 
+    // Stop shooting effects and set reload to true, set amount of bullets to max amount, update text with it
     private IEnumerator StartReloading()
     {
         gunReload.Play();
@@ -153,8 +175,10 @@ public class PlayerShooting : MonoBehaviour
         BulletCounter.instance.UpdateValue((int)(amountOfBullets - currentAmountOfBullets));
         currentAmountOfBullets = amountOfBullets;
         reloading = false;
+        shootCooldown = 0;
     }
 
+    // Stop shooting effects
     private void StopShooting()
     {
         camera.camShake = false;
@@ -163,12 +187,14 @@ public class PlayerShooting : MonoBehaviour
         gunSmoke.Stop();
     }
 
+    // Increase bullet max capacity, reload
     public void AddBullets(float bulletIncrease)
     {
         amountOfBullets += bulletIncrease;
         StartCoroutine(StartReloading());
     }
 
+    // Increase damage done
     public void IncreasePower(float damageIncrease)
     {
         damage += damageIncrease;

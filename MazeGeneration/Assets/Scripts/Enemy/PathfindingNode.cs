@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PathfindingNode
 {
+    // Saves required variables for pathfinding
     private int gridX = 0, gridY = 0, gCost = 0, hCost = 0;
 
     private bool isWall = false;

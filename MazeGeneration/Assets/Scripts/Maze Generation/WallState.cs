@@ -5,6 +5,7 @@ using System;
 
 public class WallState
 {
+    // Save direction and whether this wall has been visited
     public enum Direction {
         None,
         Left,

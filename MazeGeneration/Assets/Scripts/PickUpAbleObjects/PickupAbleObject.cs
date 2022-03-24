@@ -29,6 +29,7 @@ public class PickupAbleObject : MonoBehaviour
         Instantiate();
     }
 
+    // Set vars
     public virtual void Instantiate()
     {
         colliders = GetComponentsInChildren<BoxCollider>();
@@ -38,6 +39,7 @@ public class PickupAbleObject : MonoBehaviour
         rigidbody.freezeRotation = true;
     }
 
+    // Start playing animation when collide with player
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.transform.tag == "Player" && !isOpened)
@@ -46,6 +48,7 @@ public class PickupAbleObject : MonoBehaviour
         }
     }
 
+    // Play animation/ sound. Cant collide with player anymore and stop movement
     private IEnumerator PlayAnimation()
     {
         pickUpSoundEffect.Play();
@@ -57,6 +60,7 @@ public class PickupAbleObject : MonoBehaviour
         StartCoroutine(PauzeAnimation());
     }
 
+    // Pauze animation at the halfway point to grant effect and show text
     private IEnumerator PauzeAnimation()
     {
         yield return new WaitForSeconds(1f);
@@ -66,6 +70,7 @@ public class PickupAbleObject : MonoBehaviour
         StartCoroutine(ContinueAnimation());
     }
 
+    // After given amount of time of being open, close again
     private IEnumerator ContinueAnimation()
     {
         yield return new WaitForSeconds(boxOpenedTime);
@@ -73,6 +78,7 @@ public class PickupAbleObject : MonoBehaviour
         StartCoroutine(EndAnimation());
     }
 
+    // Stop animation and make object collideble again. Return to pool
     private IEnumerator EndAnimation()
     {
         yield return new WaitForSeconds(1f);
@@ -81,6 +87,7 @@ public class PickupAbleObject : MonoBehaviour
         SwitchCollidebleStatus(true);
     }
 
+    // Switch if objects can collide with object
     private void SwitchCollidebleStatus(bool status)
     {
         foreach (BoxCollider collider in colliders)
@@ -90,6 +97,7 @@ public class PickupAbleObject : MonoBehaviour
         rigidbody.useGravity = status;
     }
 
+    // Effect of pickup
     public virtual void GrantEffect()
     {
 

@@ -14,6 +14,7 @@ public class SwitchActiveStateButton : SetUIStats
         GetComponent<Button>().onClick.AddListener(SwitchActiveState);
     }
 
+    // Switches active states of objects when the button is clicked
     private void SwitchActiveState()
     {
         for (int i = 0; i < objectsToDisable.Count; i++)

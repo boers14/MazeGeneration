@@ -20,6 +20,7 @@ public class PlayerHealth : MonoBehaviour
 
     private Vector3 newHealthBarPos = Vector3.zero;
 
+    // Get UI elements
     private void Start()
     {
         greenHealth = PlayerUIHandler.instance.greenHealth;
@@ -31,6 +32,7 @@ public class PlayerHealth : MonoBehaviour
         StartCoroutine(SetHealthBarPosStats());
     }
 
+    // Set size delta/ calculate required positions
     private IEnumerator SetHealthBarPosStats()
     {
         yield return new WaitForEndOfFrame();
@@ -39,9 +41,11 @@ public class PlayerHealth : MonoBehaviour
 
         healthBarEndPos = greenHealth.rectTransform.localPosition.x - greenHealth.rectTransform.sizeDelta.x;
         diffInHealthBarPos = greenHealth.rectTransform.sizeDelta.x;
+        // Make sure health is showing at 100%
         ChangeHealth(100);
     }
 
+    // Calculate new health and show health bar moving towards new health percentage
     public void ChangeHealth(float healthChange)
     {
         currentHealth += healthChange;
@@ -50,12 +54,14 @@ public class PlayerHealth : MonoBehaviour
         if (currentHealth <= 0)
         {
             EndScreenManager.instance.EndRun();
+            return;
         }
 
         healthPercentage = currentHealth / maxHealth;
         float healthBarXPos = healthBarEndPos + (diffInHealthBarPos * healthPercentage);
         newHealthBarPos = greenHealth.rectTransform.localPosition;
 
+        // Perform different tween based on adding health/ losing health
         if (healthChange < 0)
         {
             Vector3 newPos = GetNewPos(healthBarXPos, healthDetractColor);
@@ -72,6 +78,7 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
+    // Set the position of the animated health to the health bar and calculate where it needs to tween towards
     private Vector3 GetNewPos(float healthBarXPos, Color32 animatedHealthColor)
     {
         animatedHealth.color = animatedHealthColor;
@@ -84,12 +91,14 @@ public class PlayerHealth : MonoBehaviour
         return newPos;
     }
 
+    // Set healthbar to the end position
     private void SetHealthBarPos()
     {
         greenHealth.rectTransform.localPosition = newHealthBarPos;
         SetHealthColor();
     }
 
+    // Calculate the color of the healthbar (green > orange > red (skip ugly brown))
     private void SetHealthColor()
     {
         float greenValue = 0;

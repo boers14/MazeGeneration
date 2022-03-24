@@ -5,6 +5,7 @@ using TMPro;
 
 public class PickUpSpawner : MonoBehaviour
 {
+    // Is singleton
     public static PickUpSpawner instance = null;
 
     [System.NonSerialized]
@@ -31,6 +32,7 @@ public class PickUpSpawner : MonoBehaviour
         PowerIncrease
     }
 
+    // Is object pool of multiple objects
     private void Start()
     {
         if (!instance)
@@ -47,9 +49,11 @@ public class PickUpSpawner : MonoBehaviour
             AddObjectsToPool(15, possiblePickupAbleObjects[i]);
         }
 
+        // Make text invisible
         powerupExplanation.color = endColor;
     }
 
+    // Add given object to pool
     private void AddObjectsToPool(int count, PickupAbleObject pickupAbleObject)
     {
         for (int i = 0; i < count; i++)
@@ -61,6 +65,7 @@ public class PickUpSpawner : MonoBehaviour
         }
     }
 
+    // Return all active objects to pool
     public void ReturnAllObjectsToPool()
     {
         for (int i = 0; i < activeObjects.Count; i++)
@@ -70,9 +75,11 @@ public class PickUpSpawner : MonoBehaviour
         }
         activeObjects.Clear();
 
+        // Make text invisible
         powerupExplanation.color = endColor;
     }
 
+    // Return object to pool
     public void ReturnObjectToPool(PickupAbleObject pickupAbleObject)
     {
         activeObjects.Remove(pickupAbleObject);
@@ -80,6 +87,7 @@ public class PickUpSpawner : MonoBehaviour
         pickupAbleObject.gameObject.SetActive(false);
     }
 
+    // Spawn pickup based on a random type
     public IEnumerator SpawnPickUps()
     {
         PickupAbleObjectType type = (PickupAbleObjectType)Random.Range(0, System.Enum.GetNames(typeof(PickupAbleObjectType)).Length);
@@ -92,9 +100,11 @@ public class PickUpSpawner : MonoBehaviour
         StartCoroutine(SpawnPickUps());
     }
 
+    // Get object based on type from pool
     private PickupAbleObject RetrieveObjectFromPoolBasedOnType(PickupAbleObjectType type)
     {
         PickupAbleObject newObject = FindObjectBasedOnType(objectPool, type);
+        // Add object to pool of given type if there was none in pool
         if (!newObject)
         {
             AddObjectsToPool(5, FindObjectBasedOnType(possiblePickupAbleObjects, type));
@@ -107,11 +117,13 @@ public class PickUpSpawner : MonoBehaviour
         return newObject;
     }
 
+    // Retrieve object from given list based on given type
     private PickupAbleObject FindObjectBasedOnType(List<PickupAbleObject> pickupAbleObjects, PickupAbleObjectType type)
     {
         return pickupAbleObjects.Find(obj => obj.type == type);
     }
 
+    // Display text tween
     public void ShowPowerupEffect(string text)
     {
         iTween.Stop(powerupExplanation.gameObject);
@@ -120,6 +132,7 @@ public class PickUpSpawner : MonoBehaviour
         iTween.ValueTo(gameObject, iTween.Hash("from", 0, "to", 1, "time", tweenTime, "onupdate", "UpdateTextColor"));
     }
 
+    // Update text color to end color based on point in tween
     private void UpdateTextColor(float val)
     {
         Color32 newColor = powerupExplanation.color;
@@ -131,6 +144,7 @@ public class PickUpSpawner : MonoBehaviour
         powerupExplanation.color = newColor;
     }
 
+    // Stop creating pickups
     public void StopGeneratingPickups()
     {
         amountOfHealthIncreased = 0;

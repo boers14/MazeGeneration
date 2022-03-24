@@ -5,6 +5,8 @@ using TMPro;
 
 public class EndScreenManager : MonoBehaviour
 {
+    // Is singleton
+    // TODO: Make singleton class where all singletons can extend from
     public static EndScreenManager instance = null;
 
     [System.NonSerialized]
@@ -31,28 +33,34 @@ public class EndScreenManager : MonoBehaviour
         }
     }
 
+    // Perform different actions based on which menu the player is on
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (isInGame)
             {
+                // End current run
                 EndRun();
             } else if (isOnEndScreen)
             {
+                // Go to main menu
                 SwitchToMainMenu();
             } else
             {
+                // Quit game on main menu or maze generation
                 Application.Quit();
             }
         }
 
+        // Delete current highscore
         if (Input.GetKeyDown(KeyCode.P))
         {
             SaveSytem.DeleteGame();
         }
     }
 
+    // Turn off all current game effects and reset all game managers
     public void EndRun()
     {
         isInGame = false;
@@ -77,6 +85,7 @@ public class EndScreenManager : MonoBehaviour
         PickUpSpawner.instance.ReturnAllObjectsToPool();
         PickUpSpawner.instance.StopGeneratingPickups();
 
+        // Set end screen values
         endScreen.SetActive(true);
         if (ScoreManager.instance.CheckIfNewHighScore())
         {
@@ -90,6 +99,7 @@ public class EndScreenManager : MonoBehaviour
         scoreText.text = "Final score: " + ScoreManager.instance.value;
     }
 
+    // Go to main menu screen
     private void SwitchToMainMenu()
     {
         isOnEndScreen = false;

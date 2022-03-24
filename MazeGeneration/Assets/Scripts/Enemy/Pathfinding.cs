@@ -16,14 +16,18 @@ public class Pathfinding : MonoBehaviour
         grid = PathfindingGrid.instance;
     }
 
+    // Find a path from the startpos to the targetpos with a*pathfinding
     public void FindPath(Vector3 startPos, Vector3 targetPos, PathfindingNode startNode)
     {
+        // Get a startnode if none is given
         if (startNode == null)
         {
             startNode = grid.NodeFromWorldPos(startPos);
         }
 
+        // Find the endnode
         PathfindingNode targetNode = grid.NodeFromWorldPos(targetPos);
+        // If the endwall is a node get one of its neighbours as the end pos instead
         while (targetNode.IsWall())
         {
             bool foundNewNode = false;
@@ -43,6 +47,7 @@ public class Pathfinding : MonoBehaviour
             }
         }
 
+        // Add startnode a start searching
         List<PathfindingNode> openList = new List<PathfindingNode>();
         HashSet<PathfindingNode> closedList = new HashSet<PathfindingNode>();
         openList.Add(startNode);
@@ -53,6 +58,7 @@ public class Pathfinding : MonoBehaviour
 
             for (int i = 1; i < openList.Count; i++)
             {
+                // Get the closestnode to the end position
                 if (Vector3.Distance(openList[i].pos, targetNode.pos) < Vector3.Distance(currentNode.pos, targetNode.pos))
                 {
                     currentNode = openList[i];
@@ -62,19 +68,23 @@ public class Pathfinding : MonoBehaviour
             openList.Remove(currentNode);
             closedList.Add(currentNode);
 
+            // If at the end, get the final path
             if (currentNode == targetNode)
             {
                 GetFinalPath(startNode, targetNode);
-                return;
+                break;
             }
 
+            // Get neighbour nodes
             foreach (PathfindingNode node in grid.GetNeighborNodes(currentNode))
             {
+                // Make sure neighbour node is now wall or in one of the two lists
                 if (node.IsWall() || closedList.Contains(node) || openList.Contains(node))
                 {
                     continue;
                 }
 
+                // Find the most efficient route
                 int moveCost = currentNode.GetGCost() + GetManhattenDist(currentNode, node);
 
                 if (moveCost < node.GetFCost() || !openList.Contains(node))
@@ -88,6 +98,7 @@ public class Pathfinding : MonoBehaviour
         }
     }
 
+    // Get final path based on the parents of all the nodes, fill path to position
     public virtual void GetFinalPath(PathfindingNode startNode, PathfindingNode endNode)
     {
         finalPath.Clear();
@@ -105,6 +116,7 @@ public class Pathfinding : MonoBehaviour
         }
     }
 
+    // Calculate distance based on manhatten dist
     private int GetManhattenDist(PathfindingNode currentNode, PathfindingNode neighborNode)
     {
         int x = Mathf.Abs(currentNode.GetGridX() - neighborNode.GetGridX());

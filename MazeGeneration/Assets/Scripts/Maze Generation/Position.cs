@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Position
 {
+    // Position of wall
     public int x;
     public int y;
 

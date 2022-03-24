@@ -11,11 +11,13 @@ public class EnemyAttackHitbox : MonoBehaviour
         enemy = GetComponentInParent<Enemy>();
     }
 
+    // Enemy deals damage when colliding with player
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.transform.tag == "Player" && enemy.canDealDamage)
         {
             collision.transform.GetComponent<PlayerHealth>().ChangeHealth(-enemy.attackPower);
+            // Can only deal damage once per attack
             enemy.canDealDamage = false;
         }
     }

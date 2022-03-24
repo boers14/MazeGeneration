@@ -7,6 +7,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 public static class SaveSytem
 {
+    // Save the game using the binary formatter so game data cannot be changed easily
     public static void SaveGame()
     {
         DeleteGame();
@@ -20,6 +21,7 @@ public static class SaveSytem
         }
     }
 
+    // Load the game
     public static PlayerData LoadGame()
     {
         string path = Path.Combine(Application.persistentDataPath, "savedGame.maze");
@@ -39,6 +41,7 @@ public static class SaveSytem
         }
     }
 
+    // Delete the game
     public static void DeleteGame()
     {
         string path = Path.Combine(Application.persistentDataPath, "savedGame.maze");
@@ -48,6 +51,8 @@ public static class SaveSytem
         }
     }
 
+
+    // Check if there is a saved game
     public static bool CheckIfFileExist()
     {
         string path = Path.Combine(Application.persistentDataPath, "savedGame.maze");

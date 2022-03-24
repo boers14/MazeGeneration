@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GrenadeCounter : CountingText
 {
+    // Is singleton
     public static GrenadeCounter instance = null;
 
     private void Start()

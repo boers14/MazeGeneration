@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class EnemyManager : ObjectPool
 {
+    // Is singleton
     public static EnemyManager instance = null;
 
     [SerializeField]
@@ -33,6 +34,7 @@ public class EnemyManager : ObjectPool
         baseRunSpeed = objectForPool.GetComponent<Enemy>().runSpeed;
     }
 
+    // Find the player and start generating enemys
     public void FindPlayerObject()
     {
         player = FindObjectOfType<PlayerMovement>().transform;
@@ -43,10 +45,12 @@ public class EnemyManager : ObjectPool
             base.Start();
         }
 
+        // Start generating pick-ups
         StartCoroutine(PickUpSpawner.instance.SpawnPickUps());
         StartCoroutine(CreateNewWaveOfEnemys());
     }
 
+    // Calculate new stats for enemys and create a new position for the enemy
     private IEnumerator CreateNewWaveOfEnemys()
     {
         newWaveSound.Play();
@@ -69,9 +73,11 @@ public class EnemyManager : ObjectPool
             newEnemy.addedScore = scoreEnemys;
             newEnemy.runSpeed = speedEnemys;
             newEnemy.player = player;
+            // Search for player
             newEnemy.RelocatePlayer();
         }
 
+        // Update enemy counter
         EnemyCounter.instance.UpdateValue((int)amountOfEnemys);
 
         currentWave++;
@@ -80,6 +86,7 @@ public class EnemyManager : ObjectPool
         StartCoroutine(CreateNewWaveOfEnemys());
     }
 
+    // Make sure the position for the enemy is within boundsand outside of player range
     public Vector3 CreatePositionForEnemy()
     {
         PathfindingGrid grid = PathfindingGrid.instance;
@@ -93,12 +100,14 @@ public class EnemyManager : ObjectPool
         return enemyPos;
     }
 
+    // Create a random position for the enemy
     private Vector3 ReturnRandomPos()
     {
         return new Vector3(Random.Range(player.position.x - maxRangeFromPlayer, player.position.x + maxRangeFromPlayer),
             -1, Random.Range(player.position.z - maxRangeFromPlayer, player.position.z + maxRangeFromPlayer));
     }
 
+    // Stop creating enemys
     public void StopGeneratingEnemys()
     {
         currentWave = 0;

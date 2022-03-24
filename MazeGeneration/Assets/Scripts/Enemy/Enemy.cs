@@ -38,6 +38,7 @@ public class Enemy : Pathfinding
 
     private AudioSource gruntNoice = null;
 
+    // Set vars
     public override void Awake()
     {
         base.Awake();
@@ -46,13 +47,16 @@ public class Enemy : Pathfinding
         yPos = -wallPrefab.localScale.y / 2 - 0.015f;
     }
 
+    // Can oonly update if not attacking and is alive
     private void FixedUpdate()
     {
         if (isDead || isInAttackAnim) { return; }
 
+        // Check if player is in range
         float playerDist = Vector3.Distance(transform.position, player.position);
         if (playerDist <= runRange)
         {
+            // Check if there is no wall between player and enemy
             if (Physics.Raycast(transform.position - transform.forward * 0.1f + new Vector3(0, -yPos / 2, 0), 
                 (player.position - transform.position).normalized, out RaycastHit hit, playerDist, wallMask))
             {
@@ -63,6 +67,7 @@ public class Enemy : Pathfinding
                 return;
             }
 
+            // If coming from walk or attack animation, set vars for running
             if (isTweening || returnToWalkFromAttack)
             {
                 if (!gruntNoice.isPlaying)
@@ -78,9 +83,11 @@ public class Enemy : Pathfinding
                 animation.Play("Run");
             }
 
+            // update positions
             nextPosition = new Vector3(player.position.x, yPos, player.position.z);
             transform.position = Vector3.MoveTowards(transform.position, nextPosition, runSpeed);
 
+            // If player in range, attack
             if (playerDist < attackRange && !canDealDamage)
             {
                 StartCoroutine(DealDamage());
@@ -93,12 +100,14 @@ public class Enemy : Pathfinding
         transform.LookAt(nextPosition);
     }
 
+    // Get next position after having the final path
     public override void GetFinalPath(PathfindingNode startNode, PathfindingNode endNode)
     {
         base.GetFinalPath(startNode, endNode);
         GetNextPositionNode();
     }
 
+    // Walk to next position node with tweens
     private void GetNextPositionNode()
     {
         if (pathToPosition.Count > 0)
@@ -111,12 +120,15 @@ public class Enemy : Pathfinding
             iTween.MoveTo(gameObject, iTween.Hash("position", nextPosition, "time", walkSpeed, "easetype",
                 iTween.EaseType.linear, "oncomplete", "GetNextPositionNode", "oncompletetarget", gameObject));
             pathToPosition.RemoveAt(0);
+
+            // Relocate player if not near player
         } else if (Vector3.Distance(transform.position, player.position) > runRange)
         {
             RelocatePlayer();
         }
     }
 
+    // Locate the player every so often
     private IEnumerator LocatePlayer()
     {
         FindPath(transform.position, player.position, lastUsedNode);
@@ -125,6 +137,7 @@ public class Enemy : Pathfinding
         RelocatePlayer();
     }
 
+    // Refind the player on the grid
     public void RelocatePlayer()
     {
         gruntNoice.Stop();
@@ -135,6 +148,7 @@ public class Enemy : Pathfinding
         StartCoroutine(LocatePlayer());
     }
 
+    // Take damage, die if lower the 0 health
     public void TakeDamage(float damage)
     {
         health -= damage;
@@ -144,6 +158,7 @@ public class Enemy : Pathfinding
         }
     }
 
+    // Death animations and reset bools
     private IEnumerator Die()
     {
         isDead = true;
@@ -160,6 +175,7 @@ public class Enemy : Pathfinding
         EnemyCounter.instance.UpdateValue(-1);
     }
 
+    // Perform attack animation
     private IEnumerator DealDamage()
     {
         returnToWalkFromAttack = true;

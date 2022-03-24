@@ -32,6 +32,7 @@ public class StartGameButton : SwitchActiveStateButton
         camera = Camera.main.GetComponent<PlayerCamera>();
     }
 
+    // Spawn all required objects for the game, generate a maze, spawn grid for enemys to use, reset score manager
     private void StartGame()
     {
         EndScreenManager.instance.isInGame = true;
@@ -53,6 +54,7 @@ public class StartGameButton : SwitchActiveStateButton
         }
     }
 
+    // Destroys created objects for start run and sets camera back to defualt stats
     public void DestroyCurrentRun()
     {
         camera.transform.SetParent(null);

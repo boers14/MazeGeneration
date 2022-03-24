@@ -16,6 +16,7 @@ public class MazeGenerationInputField : MonoBehaviour
         inputField.onEndEdit.AddListener(CheckIfValidNumber);
     }
 
+    // Check if the value of the text is within the range
     private void CheckIfValidNumber(string text)
     {
         int value = int.Parse(text);
@@ -23,6 +24,7 @@ public class MazeGenerationInputField : MonoBehaviour
         CheckValue(value > maximumValue, maximumValue);
     }
 
+    // Edit the value if it is not range
     private void CheckValue(bool invalidValue, int newValue)
     {
         if (invalidValue)

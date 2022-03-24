@@ -13,6 +13,9 @@ public class UIListing : MonoBehaviour
     [SerializeField]
     private bool moveDown = true;
 
+    // Places all objects in list in order down or up
+    // All objects need same position to correctly work
+    // TODO: Use position of first object as starting pos for all objects
     private void Start()
     {
         float movementDistance = FindObjectOfType<Canvas>().GetComponent<RectTransform>().sizeDelta.y * distanceBetweenUIObjects;

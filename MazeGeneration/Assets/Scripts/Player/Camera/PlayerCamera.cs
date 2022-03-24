@@ -23,6 +23,7 @@ public class PlayerCamera : MonoBehaviour
         postProcessing = GetComponent<PostProcessingBehaviour>();
     }
 
+    // Follow player around/ rotate player & gun & camera based on mouse movement
     private void Update()
     {
         if (!player) { return; }
@@ -39,6 +40,7 @@ public class PlayerCamera : MonoBehaviour
         gun.localRotation = Quaternion.AngleAxis(-mouseLook.y, Vector3.right);
         player.localRotation = Quaternion.AngleAxis(mouseLook.x, player.up);
 
+        // Shake camera if cam shake enabled
         if (camShake)
         {
             ShakeCam(0.005f, posComparedToPlayer);
@@ -48,6 +50,7 @@ public class PlayerCamera : MonoBehaviour
         }
     }
 
+    // Set the camera ready for the game state
     public void SetCameraPosToPlayer()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -63,37 +66,7 @@ public class PlayerCamera : MonoBehaviour
         RenderSettings.fog = true;
     }
 
-    public IEnumerator StartCamShake(float duration, float magnitude, float delay)
-    {
-        Vector3 originalPos = transform.localPosition;
-
-        float elapsed = 0.0f;
-
-        while (elapsed < delay)
-        {
-            elapsed += Time.deltaTime;
-
-            yield return null;
-        }
-
-        StartCoroutine(PerformShakeCam(duration, magnitude, originalPos));
-    }
-
-    private IEnumerator PerformShakeCam(float duration, float magnitude, Vector3 pos)
-    {
-        float elapsed = 0.0f;
-
-        while (elapsed < duration)
-        {
-            ShakeCam(magnitude, pos);
-
-            elapsed += Time.deltaTime;
-
-            yield return null;
-        }
-        transform.localPosition = pos;
-    }
-
+    // Shake camera from given pos
     public void ShakeCam(float magnitude, Vector3 pos)
     {
         float x = Random.Range(-1f, 1f) * magnitude;
@@ -103,6 +76,7 @@ public class PlayerCamera : MonoBehaviour
         transform.localPosition = new Vector3(pos.x + x, pos.y + y, pos.z + z);
     }
 
+    // Turn of post processing
     private void OnDisable()
     {
         postProcessing.enabled = false;

@@ -20,12 +20,14 @@ public class GunExplosions : MonoBehaviour
 
     public ExplosionType explosionType = ExplosionType.Floor;
 
+    // Set vars
     private void Awake()
     {
         particleSystem = GetComponent<ParticleSystem>();
         explosionTime = particleSystem.main.startLifetime.constant;
     }
 
+    // Return explosion to the objectpool after it played
     public IEnumerator ReturnExplosionToList()
     {
         yield return new WaitForSeconds(explosionTime * 3);

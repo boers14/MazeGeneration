@@ -5,6 +5,7 @@ using TMPro;
 
 public class ScoreManager : CountingText
 {
+    // Is singleton
     public static ScoreManager instance = null;
 
     public int highScore { private set; get; } = 0;
@@ -20,6 +21,7 @@ public class ScoreManager : CountingText
             return;
         }
 
+        // Grab highscore from saved data if its there
         if (SaveSytem.CheckIfFileExist())
         {
             PlayerData data = SaveSytem.LoadGame();
@@ -27,10 +29,12 @@ public class ScoreManager : CountingText
         }
     }
 
+    // Check and set new highscore for game 
     public bool CheckIfNewHighScore()
     {
         if (value > highScore)
         {
+            // Only saves game if there is a new highscore
             SaveSytem.SaveGame();
             highScore = value;
             return true;

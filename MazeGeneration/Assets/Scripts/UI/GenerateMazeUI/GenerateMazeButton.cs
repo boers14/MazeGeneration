@@ -18,6 +18,7 @@ public class GenerateMazeButton : SetUIStats
         camera = Camera.main.GetComponent<FlyCamera>();
     }
 
+    // Generate the maze based on the given numbers in the inputfield
     private void GenerateMaze()
     {
         int width = int.Parse(widthInput.text);

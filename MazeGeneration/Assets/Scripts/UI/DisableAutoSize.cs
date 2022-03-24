@@ -13,6 +13,7 @@ public class DisableAutoSize : MonoBehaviour
         StartCoroutine(StopAutoSize());
     }
 
+    // Stops auto resize of text of after setting correct font size
     private IEnumerator StopAutoSize()
     {
         yield return new WaitForEndOfFrame();

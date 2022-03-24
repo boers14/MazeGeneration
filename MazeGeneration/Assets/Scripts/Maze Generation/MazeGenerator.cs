@@ -4,12 +4,8 @@ using UnityEngine;
 
 public static class MazeGenerator
 {
-    public enum MazeType
-    {
-        RecursiveBackTracking
-    }
-
-    public static WallState[,] GenerateMaze(int width, int height, MazeType mazeType)
+    // Create empty maze
+    public static WallState[,] GenerateMaze(int width, int height)
     {
         WallState[,] maze = new WallState[width, height];
 
@@ -21,18 +17,16 @@ public static class MazeGenerator
             }
         }
 
-        switch (mazeType)
-        {
-            case MazeType.RecursiveBackTracking:
-                maze = ApplyRecursiveBackTracking(maze, width, height);
-                break;
-        }
+        // Fill maze
+        maze = ApplyRecursiveBackTracking(maze, width, height);
 
         return maze;
     }
 
+    // Return maze based on recursive backtracking
     private static WallState[,] ApplyRecursiveBackTracking(WallState[,] maze, int width, int height)
     {
+        // Grab random pos and mark it as visited
         Stack<Position> positionStack = new Stack<Position>();
         Position position = new Position(Random.Range(0, width), Random.Range(0, height));
 
@@ -41,16 +35,21 @@ public static class MazeGenerator
 
         while (positionStack.Count > 0)
         {
+            // Grab last added position and check if it has unvisted neighbours
             Position current = positionStack.Pop();
             List<Neighbour> neighbours = GetUnvisitedNeighbours(current, maze, width, height);
 
+            // If there are neighbours continue else go to next position
             if (neighbours.Count > 0)
             {
+                // Re-add position
                 positionStack.Push(current);
+                // Grab random neighbour to go to
                 Neighbour randomNeighbour = neighbours[Random.Range(0, neighbours.Count)];
 
+                // Check which direction the neighbour is and mark that as the direction of the current node (neigbout gains opposite
+                // direction, to make sure all positions have a wall)
                 Position neighbourPos = randomNeighbour.position;
-
                 if (neighbourPos.x != current.x)
                 {
                     SetDirectionOfNode(current.x, neighbourPos.x, current, neighbourPos, WallState.Direction.Right, 
@@ -61,8 +60,10 @@ public static class MazeGenerator
                         WallState.Direction.Down, maze);
                 }
 
+                // Mark position as visited
                 maze[neighbourPos.x, neighbourPos.y].visited = true;
 
+                // Add neighbour
                 positionStack.Push(neighbourPos);
             }
         }
@@ -70,6 +71,7 @@ public static class MazeGenerator
         return maze;
     }
 
+    // Set the direction of a given node based on the given variables
     private static void SetDirectionOfNode(int currentPos, int neighbourPos, Position current, Position neighbour,
         WallState.Direction positiveDirection, WallState.Direction negativeDirection, WallState[,] maze)
     {
@@ -85,6 +87,7 @@ public static class MazeGenerator
         }
     }
 
+    // Add all unvisited neigbours to the list
     private static List<Neighbour> GetUnvisitedNeighbours(Position pos, WallState[,] maze, int width, int height)
     {
         List<Neighbour> unvisitedNeighbours = new List<Neighbour>();
@@ -97,6 +100,7 @@ public static class MazeGenerator
         return unvisitedNeighbours;
     }
 
+    // Check if position is within bounds and is not visited
     private static void AddNeigbourToList(List<Neighbour> unvisitedNeighbours, Position posToCheck, bool shouldCheck, 
         WallState[,] maze)
     {

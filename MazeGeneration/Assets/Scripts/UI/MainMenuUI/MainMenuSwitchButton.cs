@@ -10,6 +10,7 @@ public class MainMenuSwitchButton : SwitchActiveStateButton
 
     private new FlyCamera camera = null;
 
+    // For switching between maze generation menu/ main menu
     public override void Awake()
     {
         base.Awake();
@@ -17,6 +18,7 @@ public class MainMenuSwitchButton : SwitchActiveStateButton
         GetComponent<Button>().onClick.AddListener(SwitchMenuState);
     }
 
+    // Clear maze, set sky camera function the what the menu requires
     private void SwitchMenuState()
     {
         camera.enabled = mainMenuButton;

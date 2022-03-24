@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class BulletCounter : CountingText
 {
+    // Is singleton
     public static BulletCounter instance = null;
 
     private void Start()
