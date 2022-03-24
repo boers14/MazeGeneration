@@ -25,7 +25,8 @@ public class EnemyManager : ObjectPool
         if (!instance)
         {
             instance = this;
-        } else
+        }
+        else
         {
             Destroy(gameObject);
             return;
@@ -86,7 +87,7 @@ public class EnemyManager : ObjectPool
         StartCoroutine(CreateNewWaveOfEnemys());
     }
 
-    // Make sure the position for the enemy is within boundsand outside of player range
+    // Make sure the position for the enemy is within bounds and outside of player range
     public Vector3 CreatePositionForEnemy()
     {
         PathfindingGrid grid = PathfindingGrid.instance;
@@ -103,8 +104,13 @@ public class EnemyManager : ObjectPool
     // Create a random position for the enemy
     private Vector3 ReturnRandomPos()
     {
-        return new Vector3(Random.Range(player.position.x - maxRangeFromPlayer, player.position.x + maxRangeFromPlayer),
-            -1, Random.Range(player.position.z - maxRangeFromPlayer, player.position.z + maxRangeFromPlayer));
+        return new Vector3(ReturnRandomPosPart(player.position.x), -1, ReturnRandomPosPart(player.position.z));
+    }
+
+    // Create random float for pos based on player pos
+    private float ReturnRandomPosPart(float playerPos)
+    {
+        return Random.Range(playerPos - maxRangeFromPlayer, playerPos + maxRangeFromPlayer);
     }
 
     // Stop creating enemys

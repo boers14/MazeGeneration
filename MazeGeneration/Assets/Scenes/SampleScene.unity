@@ -1377,6 +1377,10 @@ MonoBehaviour:
   scoreText: {fileID: 220223880}
   highScoreText: {fileID: 1122068037}
   currentHighScoreText: {fileID: 3534870}
+  countingTexts:
+  - {fileID: 1400905368}
+  - {fileID: 1344222706}
+  - {fileID: 510893812}
 --- !u!4 &526108064
 Transform:
   m_ObjectHideFlags: 0

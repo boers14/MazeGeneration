@@ -21,6 +21,9 @@ public class EndScreenManager : MonoBehaviour
     [SerializeField]
     private TMP_Text scoreText = null, highScoreText = null, currentHighScoreText = null;
 
+    [SerializeField]
+    private List<CountingText> countingTexts = new List<CountingText>();
+
     private void Start()
     {
         if (!instance)
@@ -75,12 +78,13 @@ public class EndScreenManager : MonoBehaviour
 
         startGameButton.DestroyCurrentRun();
         PlayerUIHandler.instance.completeInGameUI.SetActive(false);
-        EnemyCounter.instance.ResetValue();
-        BulletCounter.instance.ResetValue();
-        GrenadeCounter.instance.ResetValue();
+        for (int i = 0; i < countingTexts.Count; i++)
+        {
+            countingTexts[i].ResetValue();
+        }
 
         EnemyManager.instance.ReturnAllObjectsToPool();
-        EnemyManager.instance.StopGeneratingEnemys();
+        EnemyManager.instance.GetComponent<EnemyManager>().StopGeneratingEnemys();
 
         PickUpSpawner.instance.ReturnAllObjectsToPool();
         PickUpSpawner.instance.StopGeneratingPickups();
