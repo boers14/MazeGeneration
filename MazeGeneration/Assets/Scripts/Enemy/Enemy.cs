@@ -15,9 +15,6 @@ public class Enemy : Pathfinding
     [SerializeField]
     private Transform wallPrefab = null;
 
-    [SerializeField]
-    private LayerMask wallMask = 0;
-
     private new Animation animation = null;
 
     private Vector3 nextPosition = Vector3.zero;
@@ -47,7 +44,7 @@ public class Enemy : Pathfinding
         yPos = -wallPrefab.localScale.y / 2 - 0.015f;
     }
 
-    // Can oonly update if not attacking and is alive
+    // Can only update if not attacking and is alive
     private void FixedUpdate()
     {
         if (isDead || isInAttackAnim) { return; }
@@ -154,6 +151,7 @@ public class Enemy : Pathfinding
         health -= damage;
         if (health <= 0 && !isDead)
         {
+            StopAllCoroutines();
             StartCoroutine(Die());
         }
     }
@@ -166,6 +164,8 @@ public class Enemy : Pathfinding
         isInAttackAnim = false;
         returnToWalkFromAttack = false;
         canDealDamage = false;
+        lastUsedNode = null;
+        iTween.Stop(gameObject);
 
         animation.Play("Death");
         ScoreManager.instance.UpdateValue((int)addedScore);

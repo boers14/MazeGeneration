@@ -11,6 +11,8 @@ public class Pathfinding : MonoBehaviour
 
     public List<PathfindingNode> finalPath = new List<PathfindingNode>();
 
+    public LayerMask wallMask = 0;
+
     public virtual void Awake()
     {
         grid = PathfindingGrid.instance;
@@ -27,24 +29,28 @@ public class Pathfinding : MonoBehaviour
 
         // Find the endnode
         PathfindingNode targetNode = grid.NodeFromWorldPos(targetPos);
+
         // If the endwall is a node get one of its neighbours as the end pos instead
+        List<PathfindingNode> possibleTargetNodes = new List<PathfindingNode>();
         while (targetNode.IsWall())
         {
-            bool foundNewNode = false;
+            possibleTargetNodes.Add(targetNode);
             List<PathfindingNode> neighborNodes = grid.GetNeighborNodes(targetNode);
+            PathfindingNode closestNode = null;
+            float closestDist = 100;
+
             foreach (PathfindingNode node in neighborNodes)
             {
-                if (!node.IsWall())
+                float dist = Vector3.Distance(targetPos, node.pos);
+                if (!possibleTargetNodes.Contains(node) && dist < closestDist && 
+                    !Physics.Raycast(node.pos, (targetPos - node.pos).normalized, out RaycastHit hit, dist, wallMask))
                 {
-                    targetNode = node;
-                    foundNewNode = true;
+                    closestNode = node;
+                    closestDist = dist;
                 }
             }
 
-            if (!foundNewNode)
-            {
-                targetNode = neighborNodes[Random.Range(0, neighborNodes.Count)];
-            }
+            targetNode = closestNode;
         }
 
         // Add startnode a start searching

@@ -39,7 +39,7 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator SetStaminaFillStartPos()
     {
         yield return new WaitForEndOfFrame();
-        staminaFillEndPos = staminaFill.rectTransform.localPosition.x - staminaFill.rectTransform.sizeDelta.x;
+        staminaFillEndPos = -staminaFill.rectTransform.sizeDelta.x;
         staminaUI.SetActive(false);
     }
 

@@ -39,7 +39,7 @@ public class PlayerHealth : MonoBehaviour
         greenHealth.rectTransform.sizeDelta = greenHealth.transform.parent.GetComponent<RectTransform>().sizeDelta;
         animatedHealth.rectTransform.sizeDelta = greenHealth.transform.parent.GetComponent<RectTransform>().sizeDelta;
 
-        healthBarEndPos = greenHealth.rectTransform.localPosition.x - greenHealth.rectTransform.sizeDelta.x;
+        healthBarEndPos = -greenHealth.rectTransform.sizeDelta.x;
         diffInHealthBarPos = greenHealth.rectTransform.sizeDelta.x;
         // Make sure health is showing at 100%
         ChangeHealth(100);

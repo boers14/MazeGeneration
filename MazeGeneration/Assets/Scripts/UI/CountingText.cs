@@ -45,6 +45,8 @@ public class CountingText : MonoBehaviour
     public void ResetValue()
     {
         value = 0;
+        currentShowingValue = 0;
+        startTweenValue = 0;
         text.text = baseText + value;
     }
 }

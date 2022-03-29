@@ -44,7 +44,7 @@ public class EndScreenManager : MonoBehaviour
             if (isInGame)
             {
                 // End current run
-                EndRun();
+                //EndRun();
             } else if (isOnEndScreen)
             {
                 // Go to main menu

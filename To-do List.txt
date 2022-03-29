@@ -1,0 +1,24 @@
+Check enemy spawns (seems to spawn to close)
+Make enemys not walk in each other
+Optimize player search?
+Map function
+	- Pauze game
+	- See map overview
+XP for player when killing enemy
+	On lvl up gain perks
+		- Explosive enemys
+		- Teleport away when low health, then on cooldown (30 sec?)
+		- Once revive
+		- Splash damage on gun (half damage for splash)
+		- Stun grenades
+		- Create destructeble walls (Only player can destroy them)
+		- Spawn loot crates around player
+	Perks stronger over levels
+	Certain perk levels
+	Select perks on map screen
+Different enemy types (by color?)
+	- Charge
+	- Range
+	- Tank
+	- Different sound for different enemy
+Account function for online highscore table?

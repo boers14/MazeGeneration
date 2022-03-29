@@ -306,8 +306,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6398191086281621807}
   m_LocalRotation: {x: 0.31856647, y: 0.37937334, z: -0.07997753, w: 0.8649826}
-  m_LocalPosition: {x: -0.6331334, y: 0.00000006509487, z: 0.0000002562878}
-  m_LocalScale: {x: 1, y: 0.9999999, z: 1}
+  m_LocalPosition: {x: -0.6331334, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6401906673477976647}
   - {fileID: 6397075307941237899}
@@ -1626,15 +1626,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 015dbb4a87f869f4c88fc0de30de89d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  wallMask:
+    serializedVersion: 2
+    m_Bits: 64
   walkSpeed: 0.5
   relocatePlayerTimer: 7.5
   runRange: 4
   attackRange: 1
   runSpeed: 0.02
   wallPrefab: {fileID: 5532930590037456518, guid: 503786d5316f57e43b747b1211380194, type: 3}
-  wallMask:
-    serializedVersion: 2
-    m_Bits: 64
 --- !u!82 &8811382162832122530
 AudioSource:
   m_ObjectHideFlags: 0
