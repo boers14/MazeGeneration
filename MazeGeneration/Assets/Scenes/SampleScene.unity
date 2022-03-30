@@ -2475,8 +2475,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectForPool: {fileID: 6397005779521974423, guid: 2cd53a4f61c67c54793873b16110f03e, type: 3}
-  enemysCreatedPerWave: 50
-  enemysAddedPerWave: 0
+  enemysCreatedPerWave: 10
+  enemysAddedPerWave: 2
   waveTimer: 60
   baseEnemyAttackPower: 10
   enemyAttackIncreasePerWave: 2

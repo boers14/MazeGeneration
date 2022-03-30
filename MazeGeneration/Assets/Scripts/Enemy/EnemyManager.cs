@@ -119,4 +119,17 @@ public class EnemyManager : ObjectPool
         currentWave = 0;
         StopAllCoroutines();
     }
+
+    public void StartReturnEnemyToPool(Transform enemy)
+    {
+        enemy.gameObject.SetActive(false);
+        EnemyCounter.instance.UpdateValue(-1);
+        StartCoroutine(ReturnEnemyToPool(enemy));
+    }
+
+    private IEnumerator ReturnEnemyToPool(Transform enemy)
+    {
+        yield return new WaitForSeconds(1);
+        ReturnObjectToPool(enemy);
+    }
 }

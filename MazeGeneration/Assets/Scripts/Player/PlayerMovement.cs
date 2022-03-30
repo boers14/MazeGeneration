@@ -21,6 +21,8 @@ public class PlayerMovement : MonoBehaviour
     private float maxMoveSpeed = 0, moveSpeedVertical = 0, moveSpeedHorizontal = 0, currentSprintTime = 0, 
         currentTurnOffStaminaUITime = 0, staminaFillEndPos = 0;
 
+    private bool isWalking = false;
+
     // Set ui elements/ movement vars
     private void Start()
     {
@@ -46,13 +48,13 @@ public class PlayerMovement : MonoBehaviour
     // Handle movement of player
     private void Update()
     {
+        isWalking = false;
         moveDirection = Vector3.zero;
 
         // Set player max speed to sprint speed if the player has stamina left
         if (Input.GetKey(KeyCode.LeftShift) && currentSprintTime > 0)
         {
             maxMoveSpeed = sprintSpeed;
-            currentSprintTime -= Time.deltaTime;
 
             // Turn on stamina bar if just started sprinting
             if (currentTurnOffStaminaUITime >= turnOffStaminaUITime)
@@ -65,11 +67,48 @@ public class PlayerMovement : MonoBehaviour
         {
             // Normal move speed
             maxMoveSpeed = walkSpeed;
-            if (!Input.GetKey(KeyCode.LeftShift))
-            {
-                // Regain stamina
-                currentSprintTime += Time.deltaTime * reloadSprintTimeComparedToSprintTime;
-            }
+        }
+
+        // Calculate the player forward/ back speed
+        if (Input.GetKey(KeyCode.W))
+        {
+            moveSpeedVertical = MovePlayer(moveSpeedVertical > maxMoveSpeed, maxMoveSpeed, speedUp, moveSpeedVertical, 
+                transform.forward);
+        }
+        else if (Input.GetKey(KeyCode.S))
+        {
+            moveSpeedVertical = MovePlayer(moveSpeedVertical < -maxMoveSpeed, -maxMoveSpeed, -speedUp, moveSpeedVertical, 
+                transform.forward);
+        }
+        else
+        {
+            moveSpeedVertical = SlowDownPlayer(moveSpeedVertical);
+        }
+
+        // Calculate the player left/ right speed
+        if (Input.GetKey(KeyCode.D))
+        {
+            moveSpeedHorizontal = MovePlayer(moveSpeedHorizontal > maxMoveSpeed, maxMoveSpeed, speedUp, moveSpeedHorizontal,
+                transform.right);
+        }
+        else if (Input.GetKey(KeyCode.A))
+        {
+            moveSpeedHorizontal = MovePlayer(moveSpeedHorizontal < -maxMoveSpeed, -maxMoveSpeed, -speedUp, moveSpeedHorizontal,
+                transform.right);
+        }
+        else
+        {
+            moveSpeedHorizontal = SlowDownPlayer(moveSpeedHorizontal);
+        }
+
+        if (Input.GetKey(KeyCode.LeftShift) && isWalking)
+        {
+            currentSprintTime -= Time.deltaTime;
+        }
+        else if (!isWalking || !Input.GetKey(KeyCode.LeftShift))
+        {
+            // Regain stamina
+            currentSprintTime += Time.deltaTime * reloadSprintTimeComparedToSprintTime;
         }
 
         currentSprintTime = Mathf.Clamp(currentSprintTime, 0, sprintTime);
@@ -97,52 +136,6 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        // Calculate the player forward/ back speed
-        if (Input.GetKey(KeyCode.W))
-        {
-            moveSpeedVertical = MovePlayer(moveSpeedVertical > maxMoveSpeed, maxMoveSpeed, speedUp, moveSpeedVertical, 
-                transform.forward);
-        }
-        else if (Input.GetKey(KeyCode.S))
-        {
-            moveSpeedVertical = MovePlayer(moveSpeedVertical < -maxMoveSpeed, -maxMoveSpeed, -speedUp, moveSpeedVertical, 
-                transform.forward);
-        }
-        else
-        {
-            if (moveSpeedVertical > -0.05f && moveSpeedVertical < 0.05f)
-            {
-                moveSpeedVertical = 0;
-            }
-            else
-            {
-                moveSpeedVertical *= slowDownSpeed;
-            }
-        }
-
-        // Calculate the player left/ right speed
-        if (Input.GetKey(KeyCode.D))
-        {
-            moveSpeedHorizontal = MovePlayer(moveSpeedHorizontal > maxMoveSpeed, maxMoveSpeed, speedUp, moveSpeedHorizontal,
-                transform.right);
-        }
-        else if (Input.GetKey(KeyCode.A))
-        {
-            moveSpeedHorizontal = MovePlayer(moveSpeedHorizontal < -maxMoveSpeed, -maxMoveSpeed, -speedUp, moveSpeedHorizontal,
-                transform.right);
-        }
-        else
-        {
-            if (moveSpeedHorizontal > -0.05f && moveSpeedHorizontal < 0.05f)
-            {
-                moveSpeedHorizontal = 0;
-            }
-            else
-            {
-                moveSpeedHorizontal *= slowDownSpeed;
-            }
-        }
-
         // Set movement
         moveDirection.y = rb.velocity.y;
         rb.velocity = moveDirection;
@@ -151,6 +144,7 @@ public class PlayerMovement : MonoBehaviour
     // Calculate the movespeed and set direction
     private float MovePlayer(bool clamp, float maxSpeed, float speedUp, float moveSpeed, Vector3 addedDirection)
     {
+        isWalking = true;
         moveSpeed += speedUp;
 
         if (clamp)
@@ -161,5 +155,17 @@ public class PlayerMovement : MonoBehaviour
         addedDirection *= moveSpeed;
         moveDirection += addedDirection;
         return moveSpeed;
+    }
+
+    private float SlowDownPlayer(float moveSpeed)
+    {
+        if (moveSpeed > -0.05f && moveSpeed < 0.05f)
+        {
+            return 0;
+        }
+        else
+        {
+            return moveSpeed * slowDownSpeed;
+        }
     }
 }

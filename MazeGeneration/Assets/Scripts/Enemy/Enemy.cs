@@ -171,8 +171,7 @@ public class Enemy : Pathfinding
         ScoreManager.instance.UpdateValue((int)addedScore);
         yield return new WaitForSeconds(animation.GetClip("Death").length);
 
-        EnemyManager.instance.ReturnObjectToPool(transform);
-        EnemyCounter.instance.UpdateValue(-1);
+        EnemyManager.instance.StartReturnEnemyToPool(transform);
     }
 
     // Perform attack animation
